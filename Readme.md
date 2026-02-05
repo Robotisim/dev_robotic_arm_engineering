@@ -1,42 +1,24 @@
-# Progression Plan
-* **0) ROS2 + Arm Bringup (Simulation First)** — Create a ROS2 workspace, bring up the arm in RViz/Gazebo with a clean launch pipeline.
+# Robotic Arm Engineering — Learning Path
 
-* **1) URDF/Xacro Modeling of Your Arm** — Build the arm model (links/joints, limits, inertias) and validate it in RViz with TF.
+- __Teaching approach__: start with a small __toy arm URDF__ (easy math + debugging), then teach the same concept side-by-side on the __Franka Panda__.
+- __Notes__: the core math references live in `Notes/` and are mapped by page number in `docs/Notes Index.md`.
 
-* **2) ros2_control Hardware Interface (Real Arm)** — Implement the driver layer (joint states + joint commands) so ROS2 can read/command the physical motors.
+## Quick Links
 
-* **3) Basic Joint Control (Position/Velocity Control)** — Move single joints and then multi-joint trajectories with safety limits and smooth interpolation.
+- `docs/Plan.md`
+- `docs/Notes Index.md`
+- `docs/Module 1 _ ROS2 Workspace, Simulation, and Arm Model.md`
+- `docs/Module 2 _ Joint Control, Calibration, and Forward Kinematics.md`
+- `docs/Module 3 _ Inverse Kinematics, Trajectories, and Dynamics Basics.md`
+- `docs/Module 4 _ MoveIt 2 Planning and Collision Avoidance.md`
+- `docs/Module 5 _ Pick and Place with Fixed Targets.md`
+- `docs/Module 6 _ RGB-D Perception, Calibration, and Scene Mapping.md`
+- `docs/Module 7 _ Failure Recovery, Logging, and Evaluation.md`
+- `docs/Module 8 _ Robot Learning and Language-to-Action Tasking.md`
 
-* **4) Calibration + Zeroing + Repeatability Checks** — Establish homing, joint offsets, and repeatability tests so the arm behaves predictably every run.
+## Notes PDFs
 
-* **5) Forward Kinematics (FK) + TF Verification** — Compute end-effector pose from joint angles and verify it matches RViz/TF numerically.
+- `Notes/part_1_kinematics.pdf`
+- `Notes/part_2_dynamics.pdf`
+- `Notes/part_3_motion.pdf`
 
-* **6) Inverse Kinematics (IK) for Target Poses** — Solve “move end-effector to (x,y,z,orientation)” using a practical IK approach for your arm.
-
-* **7) Trajectory Generation (Time-Parameterized Motion)** — Generate smooth joint trajectories (limits-aware) and execute them reliably on real hardware.
-
-* **8) Dynamics Basics (Why Motion Feels Different in Reality)** — Introduce torque/load, gravity effects, and tuning considerations that impact real motion quality.
-
-* **9) MoveIt 2 Integration (Planning Pipeline)** — Use MoveIt 2 for planning + execution, including planning scene, collision objects, and constraints.
-
-* **10) Motion Planning with Obstacles (Collision Avoidance)** — Plan around simple obstacles in simulation, then mirror the same planning scene on the real arm.
-
-* **11) Pick/Place “Fixed Targets” (First Manipulation)** — Execute repeatable pick-and-place using pre-defined object poses and approach/retreat motions.
-
-* **12) Perception Setup (RGB-D Camera in ROS2)** — Integrate a depth camera, publish point clouds, and align camera-to-arm calibration (extrinsics).
-
-* **13) Scene Mapping for Manipulation (Voxel/Octomap)** — Build a 3D scene representation and feed it to planning for runtime collision awareness.
-
-* **14) Runtime Object Picking (Pose from Depth)** — Detect an object, estimate its 6D pose from depth, plan grasp, and execute pick-and-place online.
-
-* **15) QR Code-Based Pick/Place (Structured Perception)** — Use QR tags to get robust IDs + poses for teaching structured automation workflows.
-
-* **16) Failure Handling + Recovery Behaviors** — Add “retry grasp,” “re-localize,” “safe retreat,” and “home” behaviors for real-world robustness.
-
-* **17) Data Logging + Evaluation Harness** — Record ROS bags, define success metrics (time, accuracy, retries), and build a repeatable test suite.
-
-* **18) RL for Motion Primitives (Simulation to Real Concepts)** — Train a small policy for a constrained skill (e.g., insertion/approach) in sim, then discuss safe transfer.
-
-* **19) VLA / “Language-to-Action” Task Layer** — Add a high-level instruction interface that selects skills (“pick red block,” “place in bin”) while ROS2 executes safely.
-
-* **20) Capstone: “Perception-Driven Autonomous Workcell”** — End-to-end system: camera → mapping → object pose → planning → pick/place → logging + recovery.
