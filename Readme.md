@@ -1,5 +1,9 @@
 # Robotic Arm Engineering Workspace
 
+Todo list:
+- Create objects and environments proper for tasks of pick and place, sorting.
+- MoveIt 2 integration.
+
 ROS 2 Jazzy workspace for simulation and control demos with:
 - `arm_sim_bringup`: custom 4DOF stick arm + Panda wrapper launch
 - `panda`: Panda simulation/control package (Gazebo + ros2_control)
