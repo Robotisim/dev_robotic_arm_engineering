@@ -1,0 +1,13 @@
+# ROS 2 workspace build artifacts
+build/
+install/
+log/
+
+# In case colcon is run from inside src/
+src/build/
+src/install/
+src/log/
+
+# Python cache
+**/__pycache__/
+*.pyc

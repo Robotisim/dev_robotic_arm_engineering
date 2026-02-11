@@ -155,13 +155,13 @@
    - __Submission__: PR + 30–60s screen recording showing both launches working.
    - __Pass Criteria__: both `ros2 launch ...` commands work on a clean rebuild.
 
-3. __M1_A03_Hardware_Plugin_Build_Check__
+3. __M1_A03_controllers_install__
    - __Goal__: `arm_hardware` builds as a plugin.
    - __Steps__: implement skeleton; export plugin; build.
    - __Submission__: PR + build log snippet.
    - __Pass Criteria__: `colcon build` succeeds; plugin export is present.
 
-4. __M1_A04_Debugging_Drill_Broken_Joint_Name__
+4. __M1_A04_Create Panda Robotic arm with stls and controllers__
    - __Goal__: diagnose and fix a deliberate joint-name mismatch.
    - __Steps__: rename one joint in URDF, reproduce failure, then fix it.
    - __Submission__: short writeup: “symptom → root cause → fix”.

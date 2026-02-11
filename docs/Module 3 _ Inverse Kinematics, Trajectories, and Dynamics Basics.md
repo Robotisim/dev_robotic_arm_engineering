@@ -94,6 +94,98 @@
 
 ---
 
+
+## 4. Live Lecture Demos (`motion` Package on Panda)
+
+### Why These Demos Matter for Module 3
+
+- __IK concept to teach (what):__ Inverse kinematics maps a desired end-effector Cartesian point `(x, y, z)` to a valid 7-joint configuration. In these demos, each Cartesian waypoint is solved numerically with a Jacobian-based IK method and joint-limit checks.
+- __IK concept to teach (how):__ Emphasize that we solve IK __per waypoint__ and use the previous solution as seed for the next one, which keeps motion continuous and reduces sudden jumps.
+- __Trajectory concept to teach (what):__ A trajectory is not a single goal; it is an ordered set of waypoints with time stamps. Here, we generate Cartesian shapes, convert them via IK into joint-space waypoints, then publish one `JointTrajectory`.
+- __Trajectory concept to teach (how):__ Show that markers are published first in RViz (`/motion/trajectory_markers`) and only then the robot command is sent (`/panda_arm_controller/joint_trajectory`), so students can verify the intended path before motion.
+
+### Runtime Setup Commands
+
+Use these commands at the start of class.
+
+```bash
+cd /home/luqman/repos/dev_robotic_arm_engineering
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install --packages-select arm_sim_bringup motion
+source install/setup.bash
+```
+
+Terminal 1 (simulation + RViz):
+
+```bash
+ros2 launch arm_sim_bringup panda_gz_control.launch.py
+```
+
+Terminal 2 (status stream for teaching):
+
+```bash
+ros2 topic echo /motion/status
+```
+
+### Demo 1: Point-to-Point (`01`)
+
+```bash
+ros2 run motion motion_01_point_to_point --ros-args -p marker_preview_sec:=2.0
+```
+
+- __Teaching paragraph:__ Start with the simplest case: two Cartesian goals. Explain that IK is solving two target points only, so students can clearly see “Cartesian goal -> joint solution -> motion.” Highlight that even for this simple case, joint limits still apply.
+
+### Demo 2: Straight Line with Many Points (`02`)
+
+```bash
+ros2 run motion motion_02_straight_line --ros-args -p marker_preview_sec:=2.0
+```
+
+- __Teaching paragraph:__ Use this to teach path discretization. The straight line is sampled into many waypoints, each waypoint solved by IK, then stitched into one timed joint trajectory. Emphasize why marker-first preview is useful: students visually confirm line quality before execution.
+
+### Demo 3: Circle + Bump Path (`03`)
+
+```bash
+ros2 run motion motion_03_circle_bump --ros-args -p marker_preview_sec:=2.0
+```
+
+- __Teaching paragraph:__ Teach non-trivial geometric trajectories. The XY path is circular while Z adds a bump profile, proving trajectory generation can combine dimensions. Connect this to manufacturing/inspection motions where tool height varies along a contour.
+
+### Demo 4: Full Rectangle Shape (`04`)
+
+```bash
+ros2 run motion motion_04_rectangle_shape --ros-args -p marker_preview_sec:=2.0
+```
+
+- __Teaching paragraph:__ Teach piecewise path composition. A rectangle is four line segments joined into one closed loop. This demo is ideal for explaining corner transitions, waypoint density, and how shape fidelity depends on sample count and timing.
+
+### Demo 5: Workspace Rejection (`05`)
+
+```bash
+ros2 run motion motion_05_workspace_reject --ros-args -p marker_preview_sec:=2.0
+```
+
+- __Teaching paragraph:__ Teach safety and validation. This path intentionally goes out of task-space bounds; markers appear, but command is rejected. Explain this as a required gate in any robot stack: validate geometry and workspace feasibility before actuator commands.
+
+### Run Other Demos the Same Way
+
+```bash
+ros2 run motion motion_01_point_to_point --ros-args -p marker_preview_sec:=3.0
+ros2 run motion motion_02_straight_line --ros-args -p marker_preview_sec:=3.0
+ros2 run motion motion_03_circle_bump --ros-args -p marker_preview_sec:=3.0
+ros2 run motion motion_04_rectangle_shape --ros-args -p marker_preview_sec:=3.0
+ros2 run motion motion_05_workspace_reject --ros-args -p marker_preview_sec:=3.0
+```
+
+### Suggested In-Class Flow (45–60 min)
+
+1. Run `01` to establish IK basics on two points.
+2. Run `02` to introduce multi-waypoint Cartesian trajectories.
+3. Run `03` and `04` to compare curved vs piecewise shape generation.
+4. Run `05` to reinforce validation/rejection before motion.
+5. Ask students to modify path parameters and observe both marker preview and motion behavior.
+
+
 ## Updated Video List
 
 > Naming convention:

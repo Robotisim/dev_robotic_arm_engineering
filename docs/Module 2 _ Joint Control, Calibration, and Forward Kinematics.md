@@ -101,10 +101,13 @@
 1. __M2_V01_Outcome_and_Safety_Model_[F]__
    - __Content__: What “safe joint control” means, limits we enforce, and what you’ll submit.
    - __Notes__: `Notes/part_3_motion.pdf` p.2-3 (what control tries to achieve)
+   - Panda arm Joints motion test and limits throuhg rviz
+   -
 
 2. __M2_V02_FK_and_Control_Loops_Under_the_Hood_[F]__
    - __Content__: DH/FK as the “math layer” under URDF/TF, plus how a joint controller closes the loop (PD/PID intuition, limits, and why tuning matters).
    - __Notes__: `Notes/part_1_kinematics.pdf` p.10-16 (FK + DH) + `Notes/part_3_motion.pdf` p.2-3 and p.12-16 (feedback + PD/PID)
+   - Explain ik fk theory
 
 3. __M2_V03_Homing_Offsets_and_Repeatability_[A]__
    - __Content__:
