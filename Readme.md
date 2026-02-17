@@ -1,8 +1,9 @@
 # Robotic Arm Engineering Workspace
 
 Todo list:
+- test Moveit Node Calls
 - Create objects and environments proper for tasks of pick and place, sorting.
-- MoveIt 2 integration.
+
 
 ROS 2 Jazzy workspace for simulation and control demos with:
 - `arm_sim_bringup`: custom 4DOF stick arm + Panda wrapper launch
@@ -23,7 +24,9 @@ sudo apt install -y \
   ros-jazzy-robot-state-publisher \
   ros-jazzy-rviz2 \
   ros-jazzy-xacro \
-  ros-jazzy-moveit-resources-panda-description
+  ros-jazzy-moveit \
+  ros-jazzy-moveit-resources-panda-description \
+  ros-jazzy-moveit-resources-panda-moveit-config
 ```
 
 ## 2) Build
@@ -73,6 +76,18 @@ Panda pick-and-place world launch (external + wrist RGB-D):
 
 ```bash
 ros2 launch panda panda_pick_and_place.launch.py
+```
+
+IK + MoveIt RViz + Gazebo execution:
+
+```bash
+ros2 launch panda panda_ik_gazebo.launch.py
+```
+
+If startup is slow and MoveIt reports start-state collision, tune delays:
+
+```bash
+ros2 launch panda panda_ik_gazebo.launch.py start_moveit_delay_sec:=12.0
 ```
 
 ### B) Run Motion Control Demos (Panda)

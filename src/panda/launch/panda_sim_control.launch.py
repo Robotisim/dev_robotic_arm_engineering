@@ -4,10 +4,12 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
+    ExecuteProcess,
     IncludeLaunchDescription,
     RegisterEventHandler,
     SetEnvironmentVariable,
 )
+from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
@@ -18,6 +20,7 @@ import xacro
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
+    seed_ready_pose = LaunchConfiguration('seed_ready_pose')
 
     panda_share_path = get_package_share_directory('panda')
     xacro_file = os.path.join(panda_share_path, 'urdf', 'panda.xacro.urdf')
@@ -75,6 +78,23 @@ def generate_launch_description():
         output='screen',
     )
 
+    ready_pose_command = ExecuteProcess(
+        cmd=[
+            '/bin/bash',
+            '-lc',
+            (
+                "ros2 topic pub --once /joint_trajectory_controller/joint_trajectory "
+                "trajectory_msgs/msg/JointTrajectory "
+                "\"{joint_names: [panda_joint1, panda_joint2, panda_joint3, panda_joint4, "
+                "panda_joint5, panda_joint6, panda_joint7], "
+                "points: [{positions: [0.0, -0.7853981633974483, 0.0, -2.356194490192345, "
+                "0.0, 1.5707963267948966, 0.7853981633974483], time_from_start: {sec: 3}}]}\""
+            ),
+        ],
+        output='screen',
+        condition=IfCondition(seed_ready_pose),
+    )
+
     wrist_eye_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -113,6 +133,11 @@ def generate_launch_description():
                 default_value='true',
                 description='If true, use simulated clock.',
             ),
+            DeclareLaunchArgument(
+                'seed_ready_pose',
+                default_value='false',
+                description='If true, command Panda to a collision-free ready pose after controllers load.',
+            ),
             set_gz_resource_path,
             set_ign_resource_path,
             gazebo,
@@ -126,6 +151,12 @@ def generate_launch_description():
                 event_handler=OnProcessExit(
                     target_action=load_joint_state_broadcaster,
                     on_exit=[load_joint_trajectory_controller],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=load_joint_trajectory_controller,
+                    on_exit=[ready_pose_command],
                 )
             ),
             robot_state_publisher,

@@ -6,7 +6,7 @@ ROS 2 Jazzy package for Panda robot description, Gazebo simulation assets, contr
 
 - Panda URDF/Xacro + meshes + worlds
 - Panda ros2_control configs
-- Panda launches (`panda_view`, `panda_sim`, `panda_sim_control`, `panda_pick_and_place`)
+- Panda launches (`panda_view`, `panda_sim`, `panda_sim_control`, `panda_pick_and_place`, `panda_ik_gazebo`)
 - wrist-mounted RGB-D camera sensor in URDF (`panda_wrist_eye_link`)
 
 ## Build
@@ -30,8 +30,36 @@ ros2 launch panda panda_sim.launch.py
 # Empty Gazebo world + Panda + controllers + wrist camera topic bridge
 ros2 launch panda panda_sim_control.launch.py
 
+# Same launch but force a collision-free ready arm pose after controller load
+ros2 launch panda panda_sim_control.launch.py seed_ready_pose:=true
+
 # Pick-and-place world (table + objects) + external RGB-D + wrist RGB-D + RViz
 ros2 launch panda panda_pick_and_place.launch.py
+
+# IK + MoveIt RViz + Gazebo controllers (Plan and Execute drives Gazebo robot)
+ros2 launch panda panda_ik_gazebo.launch.py
+```
+
+Use planning group `panda_arm` in MoveIt RViz and click `Plan and Execute` to execute in Gazebo.
+
+If startup collision appears, increase bringup delays so the ready pose is applied before MoveIt starts:
+
+```bash
+ros2 launch panda panda_ik_gazebo.launch.py start_moveit_delay_sec:=12.0
+```
+
+## Clean Restart
+
+If multiple Panda robots appear (leftover background processes), stop them before relaunching:
+
+```bash
+pkill -f "ros2 launch panda" || true
+pkill -f "gz sim" || true
+pkill -f "ros_gz_sim" || true
+pkill -f "move_group" || true
+pkill -f "controller_manager" || true
+pkill -f "robot_state_publisher" || true
+pkill -f "rviz2" || true
 ```
 
 ## Recent Package Changes
