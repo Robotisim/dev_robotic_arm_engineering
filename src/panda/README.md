@@ -33,7 +33,7 @@ ros2 launch panda panda_sim_control.launch.py
 # Same launch but force a collision-free ready arm pose after controller load
 ros2 launch panda panda_sim_control.launch.py seed_ready_pose:=true
 
-# Pick-and-place world (table + objects) + external RGB-D + wrist RGB-D + MoveIt
+# Pick-and-place world (table + objects) + external RGB-D + wrist RGB-D camera + MoveIt
 ros2 launch panda panda_pick_and_place.launch.py
 
 # IK + MoveIt RViz + Gazebo controllers (Plan and Execute drives Gazebo robot)
@@ -55,7 +55,7 @@ ros2 launch panda panda_restricted_pillars.launch.py
 ros2 launch panda panda_restricted_chicane.launch.py
 ```
 
-Use planning group `panda_arm` in MoveIt RViz and click `Plan and Execute` to execute in Gazebo.
+Use planning group `panda_arm` for arm motion and `hand` for gripper open/close in MoveIt RViz, then click `Plan and Execute`.
 
 If startup collision appears, increase bringup delays so the ready pose is applied before MoveIt starts:
 
@@ -80,15 +80,14 @@ pkill -f "rviz2" || true
 ## Recent Package Changes
 
 - Resource paths are now set directly in Panda Gazebo launches (`GZ_SIM_RESOURCE_PATH`, `IGN_GAZEBO_RESOURCE_PATH`), so manual exports are not required.
-- Added eye-in-hand RGB-D sensor mounted before the gripper on `panda_link8`, oriented outward.
+- Added eye-in-hand RGB-D sensor mounted before the gripper on `panda_link8`, oriented toward the grasp area.
 - `panda_pick_and_place.launch.py` now launches MoveIt (`move_group`) with Panda controllers in the pick-and-place world.
 - `panda_pick_and_place.launch.py` now supports reusable world and spawn arguments:
   - `world_file` for swapping the Gazebo world
   - `spawn_x`, `spawn_y`, `spawn_z`, `spawn_roll`, `spawn_pitch`, `spawn_yaw`
   - `bridge_external_camera` to enable/disable external RGB-D bridging
-- `panda_pick_and_place.launch.py` bridges both cameras:
-  - external world camera topics
-  - wrist camera topics
+- `panda_pick_and_place.launch.py` also spawns a second external RGB-D camera from another angle (topics under `/external_camera/*`).
+- Gripper controller and MoveIt hand controller mapping are enabled, so Panda hand can open/close from MoveIt RViz.
 - Added two cube-focused worlds and launches without external camera:
   - `panda_pick_and_place_cubes_env_1.launch.py`
   - `panda_pick_and_place_cubes_env_2.launch.py`
@@ -105,6 +104,11 @@ External RGB-D camera (from the world):
 - `/camera/depth/image_raw`
 - `/camera/depth/camera_info`
 
+Spawned external RGB-D camera (second viewpoint):
+- `/external_camera/image_raw`
+- `/external_camera/depth/image_raw`
+- `/external_camera/depth/camera_info`
+
 Wrist RGB-D camera (from Panda URDF sensor):
 - `/wrist_eye/image_raw`
 - `/wrist_eye/depth/image_raw`
@@ -116,9 +120,9 @@ Quick check:
 ros2 topic list | rg "camera|wrist_eye"
 ```
 
-For `panda_pick_and_place_cubes_env_1.launch.py` and `panda_pick_and_place_cubes_env_2.launch.py`, only wrist camera topics are bridged (no `/camera/*` external stream).
-
-The restricted-area launches also bridge only wrist camera topics.
+For `panda_pick_and_place_cubes_env_1.launch.py`, `panda_pick_and_place_cubes_env_2.launch.py`, and restricted-area launches:
+- world external camera bridge (`/camera/*`) is off by default
+- spawned external camera (`/external_camera/*`) and wrist RGB-D camera are available
 
 ## Example Control Node
 

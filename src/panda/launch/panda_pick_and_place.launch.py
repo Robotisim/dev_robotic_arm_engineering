@@ -45,6 +45,13 @@ def generate_launch_description():
     rviz_config = LaunchConfiguration('rviz_config')
     world_file = LaunchConfiguration('world_file')
     bridge_external_camera = LaunchConfiguration('bridge_external_camera')
+    spawn_external_rgbd_camera = LaunchConfiguration('spawn_external_rgbd_camera')
+    external_camera_x = LaunchConfiguration('external_camera_x')
+    external_camera_y = LaunchConfiguration('external_camera_y')
+    external_camera_z = LaunchConfiguration('external_camera_z')
+    external_camera_roll = LaunchConfiguration('external_camera_roll')
+    external_camera_pitch = LaunchConfiguration('external_camera_pitch')
+    external_camera_yaw = LaunchConfiguration('external_camera_yaw')
 
     spawn_x = LaunchConfiguration('spawn_x')
     spawn_y = LaunchConfiguration('spawn_y')
@@ -128,6 +135,12 @@ def generate_launch_description():
         arguments=['joint_trajectory_controller', '--controller-manager', '/controller_manager'],
         output='screen',
     )
+    load_gripper_trajectory_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper_trajectory_controller', '--controller-manager', '/controller_manager'],
+        output='screen',
+    )
 
     ready_pose_command = ExecuteProcess(
         cmd=[
@@ -182,6 +195,97 @@ def generate_launch_description():
         condition=IfCondition(bridge_external_camera),
     )
 
+    external_camera_sdf = """
+<sdf version='1.9'>
+  <model name='external_rgbd_camera_rig'>
+    <static>true</static>
+    <link name='link'>
+      <collision name='collision'>
+        <geometry>
+          <box>
+            <size>0.08 0.08 0.08</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>0.08 0.08 0.08</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1.0</ambient>
+          <diffuse>0.1 0.1 0.1 1.0</diffuse>
+        </material>
+      </visual>
+      <sensor name='external_rgbd_camera' type='rgbd_camera'>
+        <always_on>true</always_on>
+        <update_rate>20.0</update_rate>
+        <visualize>true</visualize>
+        <topic>external_rgbd_camera</topic>
+        <camera>
+          <horizontal_fov>1.0472</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>8.0</far>
+          </clip>
+        </camera>
+      </sensor>
+    </link>
+  </model>
+</sdf>
+""".strip()
+
+    spawn_external_camera = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=[
+            '-string',
+            external_camera_sdf,
+            '-name',
+            'external_rgbd_camera_rig',
+            '-allow_renaming',
+            'true',
+            '-x',
+            external_camera_x,
+            '-y',
+            external_camera_y,
+            '-z',
+            external_camera_z,
+            '-R',
+            external_camera_roll,
+            '-P',
+            external_camera_pitch,
+            '-Y',
+            external_camera_yaw,
+        ],
+        condition=IfCondition(spawn_external_rgbd_camera),
+    )
+
+    spawned_external_camera_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name='spawned_external_rgbd_bridge',
+        arguments=[
+            '/external_rgbd_camera/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
+            '/external_rgbd_camera/depth_image@sensor_msgs/msg/Image[gz.msgs.Image',
+            '/external_rgbd_camera/image@sensor_msgs/msg/Image[gz.msgs.Image',
+        ],
+        remappings=[
+            ('/external_rgbd_camera/camera_info', '/external_camera/depth/camera_info'),
+            ('/external_rgbd_camera/depth_image', '/external_camera/depth/image_raw'),
+            ('/external_rgbd_camera/image', '/external_camera/image_raw'),
+        ],
+        output='screen',
+        condition=IfCondition(spawn_external_rgbd_camera),
+    )
+
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
@@ -196,7 +300,7 @@ def generate_launch_description():
     )
 
     moveit_controller_config = _load_yaml(
-        _resolve_panda_config('moveit_controller_manager_arm_only.yaml')
+        _resolve_panda_config('moveit_controller_manager.yaml')
     )
 
     moveit_config = (
@@ -284,6 +388,41 @@ def generate_launch_description():
                 default_value='true',
                 description='If true, bridge external world RGB-D camera topics to ROS.',
             ),
+            DeclareLaunchArgument(
+                'spawn_external_rgbd_camera',
+                default_value='true',
+                description='If true, spawn an additional external RGB-D camera from another view.',
+            ),
+            DeclareLaunchArgument(
+                'external_camera_x',
+                default_value='0.95',
+                description='Spawned external camera x position.',
+            ),
+            DeclareLaunchArgument(
+                'external_camera_y',
+                default_value='1.05',
+                description='Spawned external camera y position.',
+            ),
+            DeclareLaunchArgument(
+                'external_camera_z',
+                default_value='1.75',
+                description='Spawned external camera z position.',
+            ),
+            DeclareLaunchArgument(
+                'external_camera_roll',
+                default_value='0.0',
+                description='Spawned external camera roll.',
+            ),
+            DeclareLaunchArgument(
+                'external_camera_pitch',
+                default_value='0.55',
+                description='Spawned external camera pitch.',
+            ),
+            DeclareLaunchArgument(
+                'external_camera_yaw',
+                default_value='2.70',
+                description='Spawned external camera yaw.',
+            ),
             DeclareLaunchArgument('spawn_x', default_value='0.0', description='Panda spawn x position.'),
             DeclareLaunchArgument('spawn_y', default_value='1.70', description='Panda spawn y position.'),
             DeclareLaunchArgument('spawn_z', default_value='1.0', description='Panda spawn z position.'),
@@ -308,13 +447,21 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_joint_trajectory_controller,
+                    on_exit=[load_gripper_trajectory_controller],
+                ),
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=load_gripper_trajectory_controller,
                     on_exit=[ready_pose_command],
                 ),
             ),
             spawn_entity,
+            spawn_external_camera,
             robot_state_publisher,
             wrist_eye_bridge,
             external_camera_bridge,
+            spawned_external_camera_bridge,
             TimerAction(
                 period=start_moveit_delay_sec,
                 actions=[move_group_node, rviz_node],

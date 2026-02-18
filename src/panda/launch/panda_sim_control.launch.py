@@ -77,6 +77,12 @@ def generate_launch_description():
         arguments=['joint_trajectory_controller', '--controller-manager', '/controller_manager'],
         output='screen',
     )
+    load_gripper_trajectory_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper_trajectory_controller', '--controller-manager', '/controller_manager'],
+        output='screen',
+    )
 
     ready_pose_command = ExecuteProcess(
         cmd=[
@@ -156,6 +162,12 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_joint_trajectory_controller,
+                    on_exit=[load_gripper_trajectory_controller],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=load_gripper_trajectory_controller,
                     on_exit=[ready_pose_command],
                 )
             ),

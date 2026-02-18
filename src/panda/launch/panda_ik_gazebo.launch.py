@@ -35,7 +35,7 @@ def generate_launch_description():
     rviz_config = LaunchConfiguration('rviz_config')
 
     moveit_controller_config = _load_yaml(
-        _resolve_panda_config('moveit_controller_manager_arm_only.yaml')
+        _resolve_panda_config('moveit_controller_manager.yaml')
     )
 
     panda_sim_control = IncludeLaunchDescription(
