@@ -10,9 +10,12 @@
 
   <depend>builtin_interfaces</depend>
   <depend>geometry_msgs</depend>
+  <depend>moveit_msgs</depend>
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
+  <depend>shape_msgs</depend>
   <depend>std_msgs</depend>
+  <depend>tf2_ros</depend>
   <depend>trajectory_msgs</depend>
   <depend>visualization_msgs</depend>
 

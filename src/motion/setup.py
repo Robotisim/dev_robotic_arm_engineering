@@ -29,6 +29,7 @@ setup(
             'motion_03_circle_bump = motion.demo_03_circle_bump:main',
             'motion_04_rectangle_shape = motion.demo_04_rectangle_shape:main',
             'motion_05_workspace_reject = motion.demo_05_workspace_reject:main',
+            'motion_06_moveit_pose_goal = motion.demo_06_moveit_pose_goal:main',
         ],
     },
 )
