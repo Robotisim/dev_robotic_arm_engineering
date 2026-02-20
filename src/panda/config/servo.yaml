@@ -24,7 +24,7 @@ smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
 low_pass_filter_coeff: 1.05
 
 ## MoveIt properties
-move_group_name: panda
+move_group_name: arm # Often 'manipulator' or 'arm'
 planning_frame: panda_link0 # The MoveIt planning frame. Often 'base_link' or 'world'
 
 ## Other frames

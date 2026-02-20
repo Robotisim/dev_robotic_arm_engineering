@@ -42,7 +42,7 @@ def generate_launch_description() -> LaunchDescription:
     target_qz_arg = DeclareLaunchArgument('target_qz', default_value='0.0')
     target_qw_arg = DeclareLaunchArgument('target_qw', default_value='1.0')
 
-    planning_group_arg = DeclareLaunchArgument('planning_group', default_value='panda')
+    planning_group_arg = DeclareLaunchArgument('planning_group', default_value='panda_arm')
     planning_frame_arg = DeclareLaunchArgument('planning_frame', default_value='panda_link0')
     target_link_arg = DeclareLaunchArgument('target_link', default_value='panda_link8')
     position_tolerance_arg = DeclareLaunchArgument('goal_position_tolerance', default_value='0.01')

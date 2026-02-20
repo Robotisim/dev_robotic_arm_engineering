@@ -6,7 +6,7 @@ ROS 2 Jazzy package for Panda robot description, Gazebo simulation assets, contr
 
 - Panda URDF/Xacro + meshes + worlds
 - Panda ros2_control configs
-- Panda launches (`panda_view`, `panda_sim`, `panda_sim_control`, `panda_pick_and_place`, `panda_ik_gazebo`, `panda_pick_and_place_cubes`, `panda_restricted_corridor`, `panda_restricted_pillars`, `panda_restricted_chicane`)
+- Panda launches (`panda_view`, `panda_sim`, `panda_sim_control`, `panda_pick_and_place`, `panda_ik_gazebo`, `panda_pick_and_place_cubes_env_1`, `panda_pick_and_place_cubes_env_2`, `panda_restricted_corridor`, `panda_restricted_pillars`, `panda_restricted_chicane`)
 - wrist-mounted RGB-D camera sensor in URDF (`panda_wrist_eye_link`)
 
 ## Build
@@ -39,13 +39,11 @@ ros2 launch panda panda_pick_and_place.launch.py
 # IK + MoveIt RViz + Gazebo controllers (Plan and Execute drives Gazebo robot)
 ros2 launch panda panda_ik_gazebo.launch.py
 
-# Cube environment 1: Panda + wrist RGB-D + table + 3 cubes (no world camera bridge)
-ros2 launch panda panda_pick_and_place_cubes.launch.py
+# Cube environment 1: Panda + wrist RGB-D + table + 3 cubes (no external camera)
+ros2 launch panda panda_pick_and_place_cubes_env_1.launch.py
 
-# Cube environment 2: same setup, alternate world file
-ros2 launch panda panda_pick_and_place.launch.py \
-  world_file:=$(ros2 pkg prefix panda)/share/panda/worlds/pick_and_place_cubes_env_2.sdf \
-  bridge_external_camera:=false
+# Cube environment 2: Panda + wrist RGB-D + table + 3 cubes (no external camera)
+ros2 launch panda panda_pick_and_place_cubes_env_2.launch.py
 
 # Restricted corridor: narrow passage obstacle-avoidance demo
 ros2 launch panda panda_restricted_corridor.launch.py
@@ -57,7 +55,7 @@ ros2 launch panda panda_restricted_pillars.launch.py
 ros2 launch panda panda_restricted_chicane.launch.py
 ```
 
-Use planning group `panda` for arm motion and `hand` for gripper open/close in MoveIt RViz, then click `Plan and Execute`.
+Use planning group `panda_arm` for arm motion and `hand` for gripper open/close in MoveIt RViz, then click `Plan and Execute`.
 
 If startup collision appears, increase bringup delays so the ready pose is applied before MoveIt starts:
 
@@ -90,9 +88,9 @@ pkill -f "rviz2" || true
   - `bridge_external_camera` to enable/disable external RGB-D bridging
 - `panda_pick_and_place.launch.py` also spawns a second external RGB-D camera from another angle (topics under `/external_camera/*`).
 - Gripper controller and MoveIt hand controller mapping are enabled, so Panda hand can open/close from MoveIt RViz.
-- Added cube-focused worlds without world external camera bridge:
-  - `panda_pick_and_place_cubes.launch.py` (uses `pick_and_place_cubes_env_1.sdf`)
-  - `pick_and_place_cubes_env_2.sdf` can be launched via `panda_pick_and_place.launch.py` + `world_file:=...`
+- Added two cube-focused worlds and launches without external camera:
+  - `panda_pick_and_place_cubes_env_1.launch.py`
+  - `panda_pick_and_place_cubes_env_2.launch.py`
 - Added three restricted-area obstacle worlds and launches:
   - `panda_restricted_corridor.launch.py`
   - `panda_restricted_pillars.launch.py`
@@ -122,7 +120,7 @@ Quick check:
 ros2 topic list | rg "camera|wrist_eye"
 ```
 
-For `panda_pick_and_place_cubes.launch.py`, cube env2 via `world_file:=...`, and restricted-area launches:
+For `panda_pick_and_place_cubes_env_1.launch.py`, `panda_pick_and_place_cubes_env_2.launch.py`, and restricted-area launches:
 - world external camera bridge (`/camera/*`) is off by default
 - spawned external camera (`/external_camera/*`) and wrist RGB-D camera are available
 

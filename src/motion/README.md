@@ -72,7 +72,7 @@ Trajectory demos `demo_01_*` to `demo_05_*` support:
 - `motion_03_circle_bump`: circle path with Z bump profile
 - `motion_04_rectangle_shape`: closed rectangle path
 - `motion_05_workspace_reject`: out-of-bounds path rejection example
-- `motion_06_moveit_pose_goal`: send a target pose to MoveIt (`panda`) for IK + planning + execution
+- `motion_06_moveit_pose_goal`: send a target pose to MoveIt (`panda_arm`) for IK + planning + execution
 
 ## MoveIt Pose Goal Demo
 
