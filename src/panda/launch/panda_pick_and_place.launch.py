@@ -302,13 +302,20 @@ def generate_launch_description():
     moveit_controller_config = _load_yaml(
         _resolve_panda_config('moveit_controller_manager.yaml')
     )
+    hand_joint_limit_overrides = {
+        'robot_description_planning.joint_limits.panda_finger_joint1.has_acceleration_limits': True,
+        'robot_description_planning.joint_limits.panda_finger_joint1.max_acceleration': 1.0,
+        'robot_description_planning.joint_limits.panda_finger_joint2.has_acceleration_limits': True,
+        'robot_description_planning.joint_limits.panda_finger_joint2.max_acceleration': 1.0,
+    }
 
     moveit_config = (
-        MoveItConfigsBuilder('moveit_resources_panda')
-        .robot_description(file_path='config/panda.urdf.xacro')
+        MoveItConfigsBuilder('panda', package_name='panda')
+        .robot_description(file_path='urdf/panda.xacro.urdf')
         .robot_description_semantic(file_path='config/panda.srdf')
         .robot_description_kinematics(file_path='config/kinematics.yaml')
         .joint_limits(file_path='config/joint_limits.yaml')
+        .trajectory_execution(file_path='config/moveit_controller_manager.yaml')
         .planning_scene_monitor(
             publish_robot_description=True,
             publish_robot_description_semantic=True,
@@ -325,6 +332,7 @@ def generate_launch_description():
         parameters=[
             moveit_config.to_dict(),
             moveit_controller_config,
+            hand_joint_limit_overrides,
             {'use_sim_time': use_sim_time},
         ],
     )
@@ -343,6 +351,7 @@ def generate_launch_description():
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits,
             moveit_controller_config,
+            hand_joint_limit_overrides,
             {'use_sim_time': use_sim_time},
         ],
     )

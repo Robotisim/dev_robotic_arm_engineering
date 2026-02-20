@@ -1,7 +1,7 @@
 # Robotic Arm Engineering Workspace
 ### TODO
-- Depth Camera not working
-- Perform Depth Camera based pick and place using external camera and internal camera
+- Hand group opening problem
+- Initial Position setting
 - Execute a path from obstacles
 
 ### Introduction
@@ -9,6 +9,11 @@ ROS 2 Jazzy workspace for simulation and control demos with:
 - `arm_sim_bringup`: custom 4DOF stick arm + Panda wrapper launch
 - `panda`: Panda simulation/control package (Gazebo + ros2_control + MoveIt)
 - `motion`: numbered Panda trajectory demos and MoveIt pose-goal node
+
+## Prerequisites
+
+- Ubuntu 22.04 LTS
+- ROS 2 Jazzy
 
 ## Package Docs
 

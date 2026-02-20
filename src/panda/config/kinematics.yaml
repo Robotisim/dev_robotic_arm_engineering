@@ -1,4 +1,4 @@
-arm:
+panda:
   kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
   # kinematics_solver: cached_ik_kinematics_plugin/CachedKDLKinematicsPlugin
   # kinematics_solver: lma_kinematics_plugin/LMAKinematicsPlugin

@@ -24,7 +24,7 @@ class Demo06MoveItPoseGoal(Node):
         super().__init__('motion_06_moveit_pose_goal')
 
         self.declare_parameter('move_action_name', '/move_action')
-        self.declare_parameter('planning_group', 'panda_arm')
+        self.declare_parameter('planning_group', 'panda')
         self.declare_parameter('planning_frame', 'panda_link0')
         self.declare_parameter('target_link', 'panda_link8')
         self.declare_parameter('target_x', 0.45)
