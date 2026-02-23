@@ -16,3 +16,15 @@
 
     # Show debug windows with masks (set to false in production)
     debug_images: false
+
+    # Phase 2: Depth processing parameters
+    # Enable/disable 3D localization using depth camera
+    depth_processing_enabled: true
+
+    # Valid depth range (meters)
+    depth_min_valid: 0.1
+    depth_max_valid: 3.0
+
+    # Radius for median depth sampling (pixels)
+    # Larger values = more robust but slower
+    depth_sample_radius: 2
