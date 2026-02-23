@@ -1,0 +1,18 @@
+/**:
+  ros__parameters:
+    # Area thresholds (in pixels^2)
+    min_area: 500.0
+    max_area: 50000.0
+
+    # Aspect ratio thresholds (width/height)
+    min_aspect_ratio: 0.5
+    max_aspect_ratio: 2.0
+
+    # Morphological operation kernel size
+    morph_kernel_size: 5
+
+    # Enable/disable visualization
+    visualization_enabled: true
+
+    # Show debug windows with masks (set to false in production)
+    debug_images: false
