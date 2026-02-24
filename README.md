@@ -1,8 +1,4 @@
 # Robotic Arm Engineering Workspace
-### TODO
-- Depth Camera not working
-- Perform Depth Camera based pick and place using external camera and internal camera
-- Execute a path from obstacles
 
 ### Introduction
 ROS 2 Jazzy workspace for simulation and control demos with:
@@ -18,7 +14,7 @@ ROS 2 Jazzy workspace for simulation and control demos with:
 ## Package Docs
 
 - [arm_sim_bringup README](src/arm_sim_bringup/README.md): stick-arm and Panda bringup launch guidance
-- [panda README](src/panda/README.md): Panda worlds, controllers, cameras, MoveIt, and environment launch files
+- [panda README](src/panda/README.md): Panda worlds, controllers, cameras, MoveIt, and cube-count pick-and-place launch flow
 - [motion README](src/motion/README.md): motion demos, launch arguments, and goal-sending node usage
 
 ## Dependencies (rosdep)

@@ -6,7 +6,7 @@ ROS 2 Jazzy package for Panda robot description, Gazebo simulation assets, contr
 
 - Panda URDF/Xacro + meshes + worlds
 - Panda ros2_control configs
-- Panda launches (`panda_view`, `panda_sim`, `panda_sim_control`, `panda_pick_and_place`, `panda_ik_gazebo`, `panda_pick_and_place_cubes_env_1`, `panda_pick_and_place_cubes_env_2`, `panda_restricted_corridor`, `panda_restricted_pillars`, `panda_restricted_chicane`)
+- Panda launches (`panda_view`, `panda_sim`, `panda_sim_control`, `panda_pick_and_place`, `panda_pick_and_place_cubes`, `panda_ik_gazebo`, `panda_restricted_corridor`, `panda_restricted_pillars`, `panda_restricted_chicane`)
 - wrist-mounted RGB-D camera sensor in URDF (`panda_wrist_eye_link`)
 
 ## Build
@@ -39,11 +39,11 @@ ros2 launch panda panda_pick_and_place.launch.py
 # IK + MoveIt RViz + Gazebo controllers (Plan and Execute drives Gazebo robot)
 ros2 launch panda panda_ik_gazebo.launch.py
 
-# Cube environment 1: Panda + wrist RGB-D + table + 3 cubes (no external camera)
-ros2 launch panda panda_pick_and_place_cubes_env_1.launch.py
+# Cube pick-and-place world: Panda + wrist RGB-D + table + cubes on table in front of robot (default 3, no world external camera bridge)
+ros2 launch panda panda_pick_and_place_cubes.launch.py
 
-# Cube environment 2: Panda + wrist RGB-D + table + 3 cubes (no external camera)
-ros2 launch panda panda_pick_and_place_cubes_env_2.launch.py
+# Same cube launch with custom cube count (1..5)
+ros2 launch panda panda_pick_and_place_cubes.launch.py cube_count:=5
 
 # Restricted corridor: narrow passage obstacle-avoidance demo
 ros2 launch panda panda_restricted_corridor.launch.py
@@ -88,9 +88,10 @@ pkill -f "rviz2" || true
   - `bridge_external_camera` to enable/disable external RGB-D bridging
 - `panda_pick_and_place.launch.py` also spawns a second external RGB-D camera from another angle (topics under `/external_camera/*`).
 - Gripper controller and MoveIt hand controller mapping are enabled, so Panda hand can open/close from MoveIt RViz.
-- Added two cube-focused worlds and launches without external camera:
-  - `panda_pick_and_place_cubes_env_1.launch.py`
-  - `panda_pick_and_place_cubes_env_2.launch.py`
+- Added configurable cube spawning to pick-and-place launch flow:
+  - `cube_count` argument on `panda_pick_and_place.launch.py` (valid: `1..5`, or `0` to disable)
+  - `panda_pick_and_place_cubes.launch.py` wrapper defaults to `cube_count:=3`
+  - removed legacy split cube environment files (`pick_and_place_cubes_env_1.sdf`, `pick_and_place_cubes_env_2.sdf`) in favor of one base world + dynamic spawning
 - Added three restricted-area obstacle worlds and launches:
   - `panda_restricted_corridor.launch.py`
   - `panda_restricted_pillars.launch.py`
@@ -120,7 +121,7 @@ Quick check:
 ros2 topic list | rg "camera|wrist_eye"
 ```
 
-For `panda_pick_and_place_cubes_env_1.launch.py`, `panda_pick_and_place_cubes_env_2.launch.py`, and restricted-area launches:
+For `panda_pick_and_place_cubes.launch.py` and restricted-area launches:
 - world external camera bridge (`/camera/*`) is off by default
 - spawned external camera (`/external_camera/*`) and wrist RGB-D camera are available
 

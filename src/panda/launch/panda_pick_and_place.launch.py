@@ -6,6 +6,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     ExecuteProcess,
     IncludeLaunchDescription,
+    OpaqueFunction,
     RegisterEventHandler,
     SetEnvironmentVariable,
     TimerAction,
@@ -35,6 +36,112 @@ def _resolve_panda_config(file_name):
 
     # Fallback for source-tree execution before rebuilding/installing the package.
     return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config', file_name))
+
+
+_MAX_CUBE_COUNT = 5
+_CUBE_LAYOUT = [
+    {'name': 'cube_red', 'pose': (0.430, 1.740, 1.040), 'rgba': (1.0, 0.0, 0.0, 1.0)},
+    {'name': 'cube_green', 'pose': (0.515, 1.800, 1.040), 'rgba': (0.0, 1.0, 0.0, 1.0)},
+    {'name': 'cube_blue', 'pose': (0.350, 1.865, 1.040), 'rgba': (0.0, 0.0, 1.0, 1.0)},
+    {'name': 'cube_yellow', 'pose': (0.440, 1.900, 1.040), 'rgba': (1.0, 0.9, 0.0, 1.0)},
+    {'name': 'cube_magenta', 'pose': (0.260, 1.760, 1.040), 'rgba': (1.0, 0.0, 1.0, 1.0)},
+]
+
+
+def _build_cube_sdf(name, rgba):
+    r, g, b, a = rgba
+
+    return f"""
+<sdf version='1.9'>
+  <model name='{name}'>
+    <pose>0 0 0 0 0 0</pose>
+    <link name='link'>
+      <inertial>
+        <mass>0.12</mass>
+        <inertia>
+          <ixx>0.00005</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>0.00005</iyy>
+          <iyz>0.0</iyz>
+          <izz>0.00005</izz>
+        </inertia>
+      </inertial>
+      <collision name='collision'>
+        <geometry>
+          <box>
+            <size>0.05 0.05 0.05</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>0.05 0.05 0.05</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>{r:.3f} {g:.3f} {b:.3f} {a:.3f}</ambient>
+          <diffuse>{r:.3f} {g:.3f} {b:.3f} {a:.3f}</diffuse>
+          <specular>0.05 0.05 0.05 1.0</specular>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
+""".strip()
+
+
+def _spawn_cube_models(context):
+    cube_count_value = LaunchConfiguration('cube_count').perform(context).strip()
+    try:
+        cube_count = int(cube_count_value)
+    except ValueError as exc:
+        raise RuntimeError(
+            "Invalid cube_count "
+            f"'{cube_count_value}'. Use an integer in [1, {_MAX_CUBE_COUNT}] (or 0 to disable)."
+        ) from exc
+
+    if cube_count == 0:
+        return []
+
+    if not 1 <= cube_count <= _MAX_CUBE_COUNT:
+        raise RuntimeError(
+            f"Invalid cube_count '{cube_count}'. Use an integer in [1, {_MAX_CUBE_COUNT}] (or 0 to disable)."
+        )
+
+    cube_spawners = []
+    for cube in _CUBE_LAYOUT[:cube_count]:
+        cube_x, cube_y, cube_z = cube['pose']
+        cube_spawners.append(
+            Node(
+                package='ros_gz_sim',
+                executable='create',
+                output='screen',
+                arguments=[
+                    '-string',
+                    _build_cube_sdf(cube['name'], cube['rgba']),
+                    '-name',
+                    cube['name'],
+                    '-allow_renaming',
+                    'true',
+                    '-x',
+                    f'{cube_x:.3f}',
+                    '-y',
+                    f'{cube_y:.3f}',
+                    '-z',
+                    f'{cube_z:.3f}',
+                    '-R',
+                    '0.0',
+                    '-P',
+                    '0.0',
+                    '-Y',
+                    '0.0',
+                ],
+            )
+        )
+
+    return cube_spawners
 
 
 def generate_launch_description():
@@ -384,6 +491,11 @@ def generate_launch_description():
                 description='SDF world file for Gazebo.',
             ),
             DeclareLaunchArgument(
+                'cube_count',
+                default_value='0',
+                description='Number of cubes to spawn for pick-and-place (set 1 to 5, or 0 to disable).',
+            ),
+            DeclareLaunchArgument(
                 'bridge_external_camera',
                 default_value='true',
                 description='If true, bridge external world RGB-D camera topics to ROS.',
@@ -435,7 +547,7 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=spawn_entity,
-                    on_exit=[load_joint_state_broadcaster],
+                    on_exit=[OpaqueFunction(function=_spawn_cube_models), load_joint_state_broadcaster],
                 ),
             ),
             RegisterEventHandler(
