@@ -1,0 +1,32 @@
+/**:
+  ros__parameters:
+    # Object Detector Parameters
+    object_detector:
+      # Depth-based segmentation (detects objects at a certain distance)
+      depth_min: 0.3 # metres; detect objects closer than this (table surface)
+      depth_max: 1.0 # metres; detect objects further than this
+      min_contour_area: 500 # pixels² below which contours are ignored
+
+      # Morphological operations (for noise reduction)
+      morph_kernel_size: 5 # kernel size for opening/closing operations
+
+      # Depth sampling (for 3D position calculation - used in later steps)
+      depth_sample_region: 5 # pixels; N×N region around centroid for depth averaging
+
+    # Pick and Place Executor Parameters
+    pick_place_executor:
+      approach_offset_z: 0.1 # metres above object before descent
+      cartesian_step: 0.01 # metres per Cartesian step
+
+      # Fixed place location in panda_link0
+      place_pose:
+        x: 0.4
+        y: -0.3
+        z: 0.2
+        qx: 1.0
+        qy: 0.0
+        qz: 0.0
+        qw: 0.0
+
+      detection_stability_count: 5 # frames before accepting detection
+      detection_stability_dist: 0.02 # metres
