@@ -9,7 +9,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
@@ -19,6 +21,8 @@ find_package(image_geometry REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(moveit_msgs REQUIRED)
+find_package(shape_msgs REQUIRED)
 
 # Find OpenCV from ROS2
 find_package(OpenCV 4 REQUIRED COMPONENTS core imgproc NO_MODULE)
@@ -49,9 +53,24 @@ ament_target_dependencies(color_segmentation_node
 	OpenCV
 )
 
+# MoveIt pose controller node
+add_executable(moveit_pose_controller_node
+	src/moveit_pose_controller_node.cpp
+)
+
+ament_target_dependencies(moveit_pose_controller_node
+	rclcpp
+	rclcpp_action
+	std_srvs
+	geometry_msgs
+	moveit_msgs
+	shape_msgs
+)
+
 # Install targets
 install(TARGETS
 	color_segmentation_node
+	moveit_pose_controller_node
 	DESTINATION lib/${PROJECT_NAME}
 )
 

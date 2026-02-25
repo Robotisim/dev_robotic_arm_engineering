@@ -1,8 +1,11 @@
 #include <cmath>
 #include <cv_bridge/cv_bridge.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
+#include <geometry_msgs/msg/pose_array.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <image_geometry/pinhole_camera_model.hpp>
 #include <image_transport/image_transport.hpp>>
+#include <iomanip>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -10,6 +13,11 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
+#include <sstream>
+#include <std_msgs/msg/string.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2_ros/buffer.h>
+#include <tf2_ros/transform_listener.h>
 #include <visualization_msgs/msg/marker_array.hpp>
 
 struct ColorRange {
@@ -29,6 +37,9 @@ struct DetectedObject {
 	cv::Point3d position_3d;      // 3D position in camera frame (meters)
 	bool has_valid_depth = false; // Whether depth was successfully obtained
 	double depth_value = 0.0;     // Raw depth value (meters)
+	// Phase 3: Transformed position
+	geometry_msgs::msg::Point position_base; // 3D position in robot base frame (meters)
+	bool has_transform = false;              // Whether transform was successful
 };
 
 class ColorSegmentationNode : public rclcpp::Node {
@@ -49,6 +60,13 @@ public:
 		this->declare_parameter("depth_max_valid", 3.0);   // Maximum valid depth (meters)
 		this->declare_parameter("depth_sample_radius", 2); // Radius for median depth sampling
 
+		// Phase 3 parameters
+		this->declare_parameter("transform_enabled", true);
+		this->declare_parameter("target_frame", "panda_link0");          // Robot base frame
+		this->declare_parameter("source_frame", "panda_wrist_eye_link"); // Camera frame
+		this->declare_parameter("use_image_frame", false);               // Use frame from image header
+		this->declare_parameter("tf_timeout", 0.1);                      // TF lookup timeout (seconds)
+
 		// Get parameters
 		min_area_ = this->get_parameter("min_area").as_double();
 		max_area_ = this->get_parameter("max_area").as_double();
@@ -63,6 +81,13 @@ public:
 		depth_min_valid_ = this->get_parameter("depth_min_valid").as_double();
 		depth_max_valid_ = this->get_parameter("depth_max_valid").as_double();
 		depth_sample_radius_ = this->get_parameter("depth_sample_radius").as_int();
+
+		// Phase 3 parameters
+		transform_enabled_ = this->get_parameter("transform_enabled").as_bool();
+		target_frame_ = this->get_parameter("target_frame").as_string();
+		source_frame_ = this->get_parameter("source_frame").as_string();
+		use_image_frame_ = this->get_parameter("use_image_frame").as_bool();
+		tf_timeout_ = this->get_parameter("tf_timeout").as_double();
 
 		// Initialize color ranges for different cubes
 		initializeColorRanges();
@@ -87,10 +112,18 @@ public:
 		// Create publishers
 		annotated_image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("~/annotated_image", 10);
 		markers_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("~/detection_markers", 10);
+		detections_pub_ = this->create_publisher<std_msgs::msg::String>("~/detections", 10);
 
 		// Phase 2: Publish point cloud
 		if (depth_processing_enabled_) {
 			pointcloud_pub_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("~/detected_objects_cloud", 10);
+		}
+
+		// Phase 3: Publish pose array and initialize TF
+		if (transform_enabled_) {
+			pose_array_pub_ = this->create_publisher<geometry_msgs::msg::PoseArray>("~/object_poses_base", 10);
+			tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+			tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 		}
 
 		RCLCPP_INFO(this->get_logger(), "Color Segmentation Node initialized");
@@ -99,7 +132,10 @@ public:
 			RCLCPP_INFO(this->get_logger(), "Depth processing enabled");
 			RCLCPP_INFO(this->get_logger(), "Subscribing to: /wrist_eye/depth/image_raw, /wrist_eye/depth/camera_info");
 		}
-		RCLCPP_INFO(this->get_logger(), "Publishing to: ~/annotated_image, ~/detection_markers");
+		if (transform_enabled_) {
+			RCLCPP_INFO(this->get_logger(), "Transform enabled: camera frame → %s", target_frame_.c_str());
+		}
+		RCLCPP_INFO(this->get_logger(), "Publishing to: ~/annotated_image, ~/detection_markers, ~/detections");
 	}
 
 private:
@@ -128,6 +164,34 @@ private:
 		color_ranges_.push_back({
 		    "yellow", cv::Scalar(20, 100, 50), cv::Scalar(35, 255, 255), cv::Scalar(0, 255, 255) // Yellow in BGR
 		});
+	}
+
+	std::string formatDetectionsForDebug(std::vector<DetectedObject> const& detections) {
+		if (detections.empty()) {
+			return "[none]";
+		}
+
+		std::stringstream ss;
+		ss << "[";
+		for (size_t i = 0; i < detections.size(); i++) {
+			auto const& det = detections[i];
+			if (i > 0) ss << "; ";
+
+			ss << det.color << " @ pixel(" << static_cast<int>(det.centroid.x) << "," << static_cast<int>(det.centroid.y)
+			   << ")";
+
+			if (det.has_valid_depth) {
+				ss << " cam(" << std::fixed << std::setprecision(3) << det.position_3d.x << "," << det.position_3d.y << ","
+				   << det.position_3d.z << ")m";
+			}
+
+			if (det.has_transform) {
+				ss << " base(" << std::fixed << std::setprecision(3) << det.position_base.x << "," << det.position_base.y << ","
+				   << det.position_base.z << ")m";
+			}
+		}
+		ss << "]";
+		return ss.str();
 	}
 
 	void imageCallback(const sensor_msgs::msg::Image::SharedPtr msg) {
@@ -179,7 +243,19 @@ private:
 			publishPointCloud(all_detections, msg->header);
 		}
 
+		// Phase 3: Transform to base frame and publish poses
+		if (transform_enabled_ && depth_processing_enabled_) {
+			transformDetectionsToBaseFrame(all_detections, msg->header);
+			publishPoseArray(all_detections, msg->header);
+		}
+
+		// Publish structured detections
+		publishDetections(all_detections, msg->header);
+
 		RCLCPP_INFO(this->get_logger(), "Detected %zu objects", all_detections.size());
+		if (!all_detections.empty()) {
+			RCLCPP_INFO(this->get_logger(), "Detections: %s", formatDetectionsForDebug(all_detections).c_str());
+		}
 	}
 
 	std::vector<DetectedObject> detectColorBlobs(cv::Mat const& hsv_image, ColorRange const& color_range) {
@@ -337,6 +413,13 @@ private:
 	}
 
 	void processDepthForDetections(std::vector<DetectedObject>& detections) {
+		if (detections.empty()) {
+			return;
+		}
+
+		RCLCPP_DEBUG(this->get_logger(), "Processing depth for %zu detections", detections.size());
+		size_t success_count = 0;
+
 		for (auto& detection : detections) {
 			// Look up depth at centroid
 			double depth = lookupDepthAtPoint(detection.centroid);
@@ -346,6 +429,16 @@ private:
 				detection.position_3d = deprojectPixelTo3D(detection.centroid, depth);
 				detection.depth_value = depth;
 				detection.has_valid_depth = true;
+				success_count++;
+				RCLCPP_DEBUG(this->get_logger(),
+				             "Depth OK: %s @ pixel(%.0f,%.0f) -> depth=%.3fm, 3D=(%.3f,%.3f,%.3f)",
+				             detection.color.c_str(),
+				             detection.centroid.x,
+				             detection.centroid.y,
+				             depth,
+				             detection.position_3d.x,
+				             detection.position_3d.y,
+				             detection.position_3d.z);
 			} else {
 				detection.has_valid_depth = false;
 				RCLCPP_WARN_THROTTLE(this->get_logger(),
@@ -357,6 +450,11 @@ private:
 				                     detection.centroid.y);
 			}
 		}
+
+		RCLCPP_INFO(this->get_logger(),
+		            "Depth processing: %zu/%zu objects got valid 3D positions",
+		            success_count,
+		            detections.size());
 	}
 
 	void mergeRedDetections(std::vector<DetectedObject>& detections) {
@@ -434,7 +532,7 @@ private:
 		for (auto const& detection : detections) {
 			visualization_msgs::msg::Marker marker;
 			marker.header = header;
-			marker.header.frame_id = "wrist_eye_optical_frame";
+			marker.header.frame_id = source_frame_; // Use configured camera frame
 			marker.ns = "detections";
 			marker.id = id++;
 			marker.type = visualization_msgs::msg::Marker::SPHERE;
@@ -513,11 +611,61 @@ private:
 		markers_pub_->publish(marker_array);
 	}
 
+	void publishDetections(std::vector<DetectedObject> const& detections, std_msgs::msg::Header const& header) {
+		std_msgs::msg::String msg;
+		std::stringstream json;
+
+		json << "{";
+		json << "\"timestamp\": " << header.stamp.sec << "." << std::setfill('0') << std::setw(9) << header.stamp.nanosec
+		     << ",";
+		json << "\"frame_id\": \"" << header.frame_id << "\",";
+		json << "\"count\": " << detections.size() << ",";
+		json << "\"detections\": [";
+
+		for (size_t i = 0; i < detections.size(); i++) {
+			auto const& det = detections[i];
+			if (i > 0) json << ",";
+
+			json << "{";
+			json << "\"color\": \"" << det.color << "\",";
+			json << "\"pixel\": {";
+			json << "\"x\": " << static_cast<int>(det.centroid.x) << ",";
+			json << "\"y\": " << static_cast<int>(det.centroid.y);
+			json << "},";
+			json << "\"area\": " << det.area;
+
+			if (det.has_valid_depth) {
+				json << ",\"camera_frame\": {";
+				json << "\"x\": " << std::fixed << std::setprecision(4) << det.position_3d.x << ",";
+				json << "\"y\": " << det.position_3d.y << ",";
+				json << "\"z\": " << det.position_3d.z;
+				json << "},";
+				json << "\"depth\": " << det.depth_value;
+			}
+
+			if (det.has_transform) {
+				json << ",\"base_frame\": {";
+				json << "\"x\": " << std::fixed << std::setprecision(4) << det.position_base.x << ",";
+				json << "\"y\": " << det.position_base.y << ",";
+				json << "\"z\": " << det.position_base.z;
+				json << "}";
+			}
+
+			json << "}";
+		}
+
+		json << "]";
+		json << "}";
+
+		msg.data = json.str();
+		detections_pub_->publish(msg);
+	}
+
 	void publishPointCloud(std::vector<DetectedObject> const& detections, std_msgs::msg::Header const& header) {
 		// Create point cloud message
 		sensor_msgs::msg::PointCloud2 cloud_msg;
 		cloud_msg.header = header;
-		cloud_msg.header.frame_id = "wrist_eye_optical_frame";
+		cloud_msg.header.frame_id = source_frame_; // Use configured camera frame
 
 		// Define fields: x, y, z, rgb
 		cloud_msg.height = 1;
@@ -591,13 +739,124 @@ private:
 		pointcloud_pub_->publish(cloud_msg);
 	}
 
+	// Phase 3: Transform detections to base frame
+	void transformDetectionsToBaseFrame(std::vector<DetectedObject>& detections, std_msgs::msg::Header const& header) {
+		// Count how many detections have valid depth to transform
+		size_t valid_depth_count = 0;
+		for (auto const& det : detections) {
+			if (det.has_valid_depth) {
+				valid_depth_count++;
+			}
+		}
+
+		if (valid_depth_count == 0) {
+			RCLCPP_DEBUG(this->get_logger(), "No detections with valid depth to transform");
+			return;
+		}
+
+		// Determine source frame: use image header or configured parameter
+		std::string source_frame;
+		if (use_image_frame_ && !header.frame_id.empty()) {
+			source_frame = header.frame_id;
+		} else {
+			source_frame = source_frame_; // Use configured camera frame
+		}
+
+		RCLCPP_DEBUG(this->get_logger(),
+		             "Transforming %zu detections from %s to %s",
+		             valid_depth_count,
+		             source_frame.c_str(),
+		             target_frame_.c_str());
+
+		size_t success_count = 0;
+
+		for (auto& detection : detections) {
+			if (!detection.has_valid_depth) {
+				continue; // Skip objects without 3D position
+			}
+
+			try {
+				// Create PointStamped in camera frame
+				geometry_msgs::msg::PointStamped point_camera;
+				point_camera.header = header;
+				point_camera.header.frame_id = source_frame;
+				point_camera.point.x = detection.position_3d.x;
+				point_camera.point.y = detection.position_3d.y;
+				point_camera.point.z = detection.position_3d.z;
+
+				// Transform to base frame
+				geometry_msgs::msg::PointStamped point_base;
+				point_base = tf_buffer_->transform(point_camera, target_frame_, tf2::durationFromSec(tf_timeout_));
+
+				// Store transformed position
+				detection.position_base = point_base.point;
+				detection.has_transform = true;
+				success_count++;
+
+				RCLCPP_DEBUG(this->get_logger(),
+				             "Transform OK: %s cam(%.3f,%.3f,%.3f) -> base(%.3f,%.3f,%.3f)",
+				             detection.color.c_str(),
+				             detection.position_3d.x,
+				             detection.position_3d.y,
+				             detection.position_3d.z,
+				             detection.position_base.x,
+				             detection.position_base.y,
+				             detection.position_base.z);
+
+			} catch (tf2::TransformException const& ex) {
+				RCLCPP_WARN_THROTTLE(this->get_logger(),
+				                     *this->get_clock(),
+				                     2000,
+				                     "Could not transform %s to %s: %s",
+				                     source_frame.c_str(),
+				                     target_frame_.c_str(),
+				                     ex.what());
+				detection.has_transform = false;
+			}
+		}
+
+		RCLCPP_INFO(this->get_logger(),
+		            "Transform processing: %zu/%zu objects transformed to %s frame",
+		            success_count,
+		            valid_depth_count,
+		            target_frame_.c_str());
+	}
+
+	// Phase 3: Publish PoseArray for detected objects in base frame
+	void publishPoseArray(std::vector<DetectedObject> const& detections, std_msgs::msg::Header const& header) {
+		geometry_msgs::msg::PoseArray pose_array;
+		pose_array.header.stamp = header.stamp;
+		pose_array.header.frame_id = target_frame_;
+
+		for (auto const& detection : detections) {
+			if (detection.has_transform) {
+				geometry_msgs::msg::Pose pose;
+				pose.position = detection.position_base;
+
+				// Default orientation (identity quaternion - no rotation)
+				pose.orientation.x = 0.0;
+				pose.orientation.y = 0.0;
+				pose.orientation.z = 0.0;
+				pose.orientation.w = 1.0;
+
+				pose_array.poses.push_back(pose);
+			}
+		}
+
+		if (!pose_array.poses.empty()) {
+			pose_array_pub_->publish(pose_array);
+		}
+	}
+
 	// Subscribers and Publishers
 	rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
 	rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_sub_;            // Phase 2
 	rclcpp::Subscription<sensor_msgs::msg::CameraInfo>::SharedPtr camera_info_sub_; // Phase 2
 	rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr annotated_image_pub_;
 	rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr markers_pub_;
+	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr detections_pub_;
 	rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub_; // Phase 2
+	rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr pose_array_pub_; // Phase 3
 
 	// Parameters
 	double min_area_;
@@ -614,11 +873,22 @@ private:
 	double depth_max_valid_;
 	int depth_sample_radius_;
 
+	// Phase 3 parameters
+	bool transform_enabled_;
+	std::string target_frame_;
+	std::string source_frame_;
+	bool use_image_frame_;
+	double tf_timeout_;
+
 	// Phase 2 state
 	cv::Mat current_depth_image_;
 	image_geometry::PinholeCameraModel camera_model_;
 	bool has_depth_image_ = false;
 	bool has_camera_info_ = false;
+
+	// Phase 3 state
+	std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+	std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
 	// Color ranges
 	std::vector<ColorRange> color_ranges_;
