@@ -12,17 +12,37 @@ namespace pick_place {
 		this->declare_parameter("object_detector.min_contour_area", 500);
 		this->declare_parameter("object_detector.morph_kernel_size", 5);
 		this->declare_parameter("object_detector.depth_sample_region", 5);
+		this->declare_parameter("object_detector.axis_sign_x", 1.0);
+		this->declare_parameter("object_detector.axis_sign_y", 1.0);
+		this->declare_parameter("object_detector.axis_sign_z", 1.0);
+		this->declare_parameter("object_detector.axis_order", "xyz");
+		this->declare_parameter("object_detector.output_frame_override", "");
 
 		depth_min_ = this->get_parameter("object_detector.depth_min").as_double();
 		depth_max_ = this->get_parameter("object_detector.depth_max").as_double();
 		min_contour_area_ = this->get_parameter("object_detector.min_contour_area").as_int();
 		morph_kernel_size_ = this->get_parameter("object_detector.morph_kernel_size").as_int();
 		depth_sample_region_ = this->get_parameter("object_detector.depth_sample_region").as_int();
+		axis_sign_x_ = this->get_parameter("object_detector.axis_sign_x").as_double();
+		axis_sign_y_ = this->get_parameter("object_detector.axis_sign_y").as_double();
+		axis_sign_z_ = this->get_parameter("object_detector.axis_sign_z").as_double();
+		axis_order_ = this->get_parameter("object_detector.axis_order").as_string();
+		output_frame_override_ = this->get_parameter("object_detector.output_frame_override").as_string();
+		if (axis_order_.size() != 3) {
+			RCLCPP_WARN(this->get_logger(), "Invalid axis_order '%s'. Falling back to 'xyz'.", axis_order_.c_str());
+			axis_order_ = "xyz";
+		}
 
 		RCLCPP_INFO(this->get_logger(), "Depth range: %.2f m to %.2f m", depth_min_, depth_max_);
 		RCLCPP_INFO(this->get_logger(), "Min Contour Area: %ld", min_contour_area_);
 		RCLCPP_INFO(this->get_logger(), "Morph Kernel Size: %ld", morph_kernel_size_);
 		RCLCPP_INFO(this->get_logger(), "Depth Sample Region: %ldx%ld pixels", depth_sample_region_, depth_sample_region_);
+		RCLCPP_INFO(
+		    this->get_logger(), "Axis sign correction: x=%.1f y=%.1f z=%.1f", axis_sign_x_, axis_sign_y_, axis_sign_z_);
+		RCLCPP_INFO(this->get_logger(), "Axis order mapping: %s", axis_order_.c_str());
+		if (!output_frame_override_.empty()) {
+			RCLCPP_INFO(this->get_logger(), "Object pose frame override enabled: %s", output_frame_override_.c_str());
+		}
 
 		// Subscribe to depth image and camera info topics
 		depth_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
@@ -202,15 +222,24 @@ namespace pick_place {
 							// X = (u - cx) * Z / fx
 							// Y = (v - cy) * Z / fy
 							// Z = depth
-							double X = (cx - cx_cam) * median_depth / fx;
-							double Y = (cy - cy_cam) * median_depth / fy;
-							double Z = median_depth;
+							double raw_x = (cx - cx_cam) * median_depth / fx;
+							double raw_y = (cy - cy_cam) * median_depth / fy;
+							double raw_z = median_depth;
+
+							double X = selectAxisByOrder(axis_order_[0], raw_x, raw_y, raw_z) * axis_sign_x_;
+							double Y = selectAxisByOrder(axis_order_[1], raw_x, raw_y, raw_z) * axis_sign_y_;
+							double Z = selectAxisByOrder(axis_order_[2], raw_x, raw_y, raw_z) * axis_sign_z_;
 
 							RCLCPP_INFO(this->get_logger(), "3D position in camera frame: (X=%.3f, Y=%.3f, Z=%.3f) m", X, Y, Z);
 
 							// Create and publish PoseStamped message
 							geometry_msgs::msg::PoseStamped pose_msg;
-							pose_msg.header = msg->header; // Use depth image header for frame_id and timestamp
+							pose_msg.header = msg->header;
+							if (!output_frame_override_.empty()) {
+								pose_msg.header.frame_id = output_frame_override_;
+							} else if (camera_info_received_ && !camera_model_.tfFrame().empty()) {
+								pose_msg.header.frame_id = camera_model_.tfFrame();
+							}
 							pose_msg.pose.position.x = X;
 							pose_msg.pose.position.y = Y;
 							pose_msg.pose.position.z = Z;
@@ -288,6 +317,19 @@ namespace pick_place {
 			            camera_model_.fy(),
 			            camera_model_.cx(),
 			            camera_model_.cy());
+		}
+	}
+
+	double ObjectDetector::selectAxisByOrder(char axis_char, double x, double y, double z) const {
+		switch (axis_char) {
+			case 'x':
+				return x;
+			case 'y':
+				return y;
+			case 'z':
+				return z;
+			default:
+				return 0.0;
 		}
 	}
 

@@ -256,41 +256,58 @@ namespace pick_place {
 		}
 
 		setState(State::PICKING);
+		bool execute_pick_stages = execute_enabled_;
+		bool execute_place_stages = execute_enabled_ && !execute_pick_only_;
+
+		RCLCPP_INFO(this->get_logger(),
+		            "Sequence execution flags | pick=%s place=%s",
+		            execute_pick_stages ? "true" : "false",
+		            execute_place_stages ? "true" : "false");
 
 		geometry_msgs::msg::PoseStamped pre_grasp_pose = computePreGraspPose(object_pose_base);
-		if (!planToPoseTarget(pre_grasp_pose, "pre_grasp_plan", execute_enabled_)) {
+		if (!planToPoseTarget(pre_grasp_pose, "pre_grasp_plan", execute_pick_stages)) {
 			setState(State::IDLE);
 			return;
 		}
 
-		if (!planCartesianMove(object_pose_base.pose, "cartesian_descent_plan", execute_enabled_)) {
+		if (!planCartesianMove(object_pose_base.pose, "cartesian_descent_plan", execute_pick_stages)) {
 			setState(State::IDLE);
 			return;
 		}
 
-		planGripperAction("close");
+		if (!planGripperAction("close", execute_pick_stages)) {
+			setState(State::IDLE);
+			return;
+		}
 
 		setState(State::PLACING);
 
-		if (!planCartesianMove(pre_grasp_pose.pose, "cartesian_retreat_plan", execute_enabled_ && !execute_pick_only_)) {
+		if (!planCartesianMove(pre_grasp_pose.pose, "cartesian_retreat_plan", execute_place_stages)) {
 			setState(State::IDLE);
 			return;
 		}
 
-		if (!planToPoseTarget(place_pose_, "place_pose_plan", execute_enabled_ && !execute_pick_only_)) {
+		if (!planToPoseTarget(place_pose_, "place_pose_plan", execute_place_stages)) {
 			setState(State::IDLE);
 			return;
 		}
 
-		planGripperAction("open");
+		if (!planGripperAction("open", execute_place_stages)) {
+			setState(State::IDLE);
+			return;
+		}
 
-		if (!planToNamedTarget(home_named_target_, "home_named_target_plan", execute_enabled_ && !execute_pick_only_)) {
+		if (!planToNamedTarget(home_named_target_, "home_named_target_plan", execute_place_stages)) {
 			setState(State::IDLE);
 			return;
 		}
 
 		sequence_planned_once_ = true;
-		RCLCPP_INFO(this->get_logger(), "Phase 4 planning sequence completed (plan-only, no execution)");
+		if (execute_pick_stages || execute_place_stages) {
+			RCLCPP_INFO(this->get_logger(), "Phase 5 sequence completed");
+		} else {
+			RCLCPP_INFO(this->get_logger(), "Phase 4 planning sequence completed (plan-only, no execution)");
+		}
 
 		resetDetectionStability();
 		setState(State::IDLE);
@@ -391,15 +408,14 @@ namespace pick_place {
 		return success;
 	}
 
-	void PickPlaceExecutor::planGripperAction(std::string const& action_name) {
-		bool execute_gripper = execute_enabled_ && (action_name == "close" || !execute_pick_only_);
-		if (!execute_gripper) {
+	bool PickPlaceExecutor::planGripperAction(std::string const& action_name, bool execute_action) {
+		if (!execute_action) {
 			RCLCPP_INFO(
 			    this->get_logger(), "Gripper action integrated in state machine (plan-only): %s", action_name.c_str());
-			return;
+			return true;
 		}
 
-		executeHandNamedTarget(action_name, "gripper_" + action_name);
+		return executeHandNamedTarget(action_name, "gripper_" + action_name);
 	}
 
 	bool PickPlaceExecutor::executeArmPlan(moveit::planning_interface::MoveGroupInterface::Plan const& plan,

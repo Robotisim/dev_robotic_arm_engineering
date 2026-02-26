@@ -13,6 +13,13 @@
       # Depth sampling (for 3D position calculation - used in later steps)
       depth_sample_region: 5 # pixels; N×N region around centroid for depth averaging
 
+      # Frame/axis correction for camera-frame pose output
+      output_frame_override: "" # e.g. panda_wrist_eye_link (leave empty to use camera_info frame)
+      axis_order: "zyx" # permutation candidates: xyz, xzy, yxz, yzx, zxy, zyx
+      axis_sign_x: 1.0
+      axis_sign_y: 1.0
+      axis_sign_z: 1.0
+
     # Pick and Place Executor Parameters
     pick_place_executor:
       arm_group_name: panda_arm

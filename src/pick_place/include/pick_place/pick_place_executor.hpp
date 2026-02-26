@@ -30,7 +30,7 @@ namespace pick_place {
 		                       std::string const& stage_name,
 		                       bool execute_after_plan);
 		bool planToNamedTarget(std::string const& target_name, std::string const& stage_name, bool execute_after_plan);
-		void planGripperAction(std::string const& action_name);
+		bool planGripperAction(std::string const& action_name, bool execute_action);
 		bool executeArmPlan(moveit::planning_interface::MoveGroupInterface::Plan const& plan,
 		                    std::string const& stage_name);
 		bool executeHandNamedTarget(std::string const& target_name, std::string const& stage_name);
