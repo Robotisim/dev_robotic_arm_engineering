@@ -15,6 +15,13 @@
 
     # Pick and Place Executor Parameters
     pick_place_executor:
+      arm_group_name: panda_arm
+      hand_group_name: hand
+
+      # Phase 5 execution controls
+      execute_enabled: false
+      execute_pick_only: true
+
       approach_offset_z: 0.1 # metres above object before descent
       cartesian_step: 0.01 # metres per Cartesian step
 

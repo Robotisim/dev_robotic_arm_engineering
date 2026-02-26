@@ -44,9 +44,17 @@ add_executable(object_detector_node
 )
 ament_target_dependencies(object_detector_node ${dependencies})
 
+# Build pick_place_executor_node executable (Phase 4.1)
+add_executable(pick_place_executor_node
+	src/pick_place_executor.cpp
+	src/pick_place_executor_main.cpp
+)
+ament_target_dependencies(pick_place_executor_node ${dependencies})
+
 # Install executable
 install(TARGETS
 	object_detector_node
+	pick_place_executor_node
 	DESTINATION lib/${PROJECT_NAME}
 )
 
