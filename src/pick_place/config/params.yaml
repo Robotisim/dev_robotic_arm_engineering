@@ -17,7 +17,7 @@
       output_frame_override: "" # e.g. panda_wrist_eye_link (leave empty to use camera_info frame)
       axis_order: "zyx" # permutation candidates: xyz, xzy, yxz, yzx, zxy, zyx
       axis_sign_x: 1.0
-      axis_sign_y: 1.0
+      axis_sign_y: -1.0
       axis_sign_z: 1.0
 
     # Pick and Place Executor Parameters
@@ -26,8 +26,8 @@
       hand_group_name: hand
 
       # Phase 5 execution controls
-      execute_enabled: false
-      execute_pick_only: true
+      execute_enabled: true
+      execute_pick_only: false
 
       approach_offset_z: 0.1 # metres above object before descent
       cartesian_step: 0.01 # metres per Cartesian step
