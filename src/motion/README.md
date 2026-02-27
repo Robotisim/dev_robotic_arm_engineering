@@ -4,7 +4,7 @@ ROS 2 Python package for Panda trajectory demos (IK + path generation).
 
 ## What This Package Owns
 
-- demo nodes (`motion_01_*` to `motion_06_*`)
+- demo nodes (`motion_01_*` to `motion_06_*`) and arm-hand pose-goal wrapper launch (`demo_07_*`)
 - demo launch files in `launch/`
 - a Panda wrapper launch: `panda_bringup.launch.py`
 
@@ -41,6 +41,7 @@ ros2 launch motion demo_03_circle_bump.launch.py
 ros2 launch motion demo_04_rectangle_shape.launch.py
 ros2 launch motion demo_05_workspace_reject.launch.py
 ros2 launch motion demo_06_moveit_pose_goal.launch.py
+ros2 launch motion demo_07_moveit_arm_hand_pose_goal.launch.py
 ```
 
 If Panda is already running:
@@ -73,6 +74,7 @@ Trajectory demos `demo_01_*` to `demo_05_*` support:
 - `motion_04_rectangle_shape`: closed rectangle path
 - `motion_05_workspace_reject`: out-of-bounds path rejection example
 - `motion_06_moveit_pose_goal`: send a target pose to MoveIt (`panda_arm`) for IK + planning + execution
+- `motion_07_moveit_arm_hand_pose_goal` (launch wrapper): pose goal for `panda_arm_hand` using fingertip TCP (`panda_hand_tcp`)
 
 ## MoveIt Pose Goal Demo
 
@@ -96,4 +98,55 @@ Disable current-pose logging if needed:
 ```bash
 ros2 launch motion demo_06_moveit_pose_goal.launch.py \
   log_current_pose_before_goal:=false
+```
+
+## Arm-Hand Pose Goal Demo (Fingertip TCP)
+
+Use this when you want pose goals for planning group `panda_arm_hand` referenced at the fingers/tool center.
+Workflow: run a predefined Panda environment first, then run this node.
+The node logs current pose first, then logs and sends the target goal pose.
+
+```bash
+# Terminal 1: predefined Panda environment
+ros2 launch panda panda_pick_and_place_cubes.launch.py
+
+# Terminal 2: pose-goal node
+ros2 launch motion demo_07_moveit_arm_hand_pose_goal.launch.py \
+  target_x:=0.06 target_y:=0.50 target_z:=0.30 \
+  target_qx:=1.0 target_qy:=0.0 target_qz:=0.0 target_qw:=0.0
+```
+
+Control gripper opening/closing from the same command while moving with `panda_arm_hand`:
+
+```bash
+# Keep gripper open while moving (default opening)
+ros2 launch motion demo_07_moveit_arm_hand_pose_goal.launch.py \
+  gripper_command:=open
+
+# Keep gripper closed while moving
+ros2 launch motion demo_07_moveit_arm_hand_pose_goal.launch.py \
+  gripper_command:=close
+```
+
+Set an exact gripper opening (direct angle/position) together with the pose goal:
+
+```bash
+ros2 launch motion demo_07_moveit_arm_hand_pose_goal.launch.py \
+  target_x:=0.06 target_y:=0.50 target_z:=0.30 \
+  target_qx:=1.0 target_qy:=0.0 target_qz:=0.0 target_qw:=0.0 \
+  gripper_target:=0.020
+```
+
+Notes:
+
+- `gripper_target` overrides `gripper_command` when both are provided.
+- Typical Panda finger range is around `0.0` (closed) to `0.035` (open).
+- Set `gripper_target:=-1.0` to disable direct target and use `gripper_command`.
+
+Optional: you can still enable a finger joint planning constraint, but it is disabled by default for `panda_arm_hand`:
+
+```bash
+ros2 launch motion demo_07_moveit_arm_hand_pose_goal.launch.py \
+  use_finger_joint_constraint:=true \
+  finger_joint_target:=0.035
 ```
