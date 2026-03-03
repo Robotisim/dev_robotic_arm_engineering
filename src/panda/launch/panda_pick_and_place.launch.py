@@ -28,14 +28,18 @@ def _load_yaml(file_path):
         return yaml.safe_load(file)
 
 
-def _resolve_panda_config(file_name):
+def _resolve_panda_file(*relative_parts):
     panda_share_path = get_package_share_directory('panda')
-    installed_path = os.path.join(panda_share_path, 'config', file_name)
+    installed_path = os.path.join(panda_share_path, *relative_parts)
     if os.path.exists(installed_path):
         return installed_path
 
     # Fallback for source-tree execution before rebuilding/installing the package.
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'config', file_name))
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..', *relative_parts))
+
+
+def _resolve_panda_config(file_name):
+    return _resolve_panda_file('config', file_name)
 
 
 _MAX_CUBE_COUNT = 5
@@ -168,7 +172,10 @@ def generate_launch_description():
     spawn_yaw = LaunchConfiguration('spawn_yaw')
 
     panda_share_path = get_package_share_directory('panda')
-    xacro_file = os.path.join(panda_share_path, 'urdf', 'panda.xacro.urdf')
+    xacro_file = _resolve_panda_file('urdf', 'panda.xacro.urdf')
+    panda_srdf_file = _resolve_panda_config('panda.srdf.xacro')
+    panda_kinematics_file = _resolve_panda_config('kinematics.yaml')
+    panda_joint_limits_file = _resolve_panda_config('joint_limits.yaml')
 
     resource_paths = [
         panda_share_path,
@@ -412,10 +419,10 @@ def generate_launch_description():
 
     moveit_config = (
         MoveItConfigsBuilder('moveit_resources_panda')
-        .robot_description(file_path='config/panda.urdf.xacro')
-        .robot_description_semantic(file_path='config/panda.srdf')
-        .robot_description_kinematics(file_path='config/kinematics.yaml')
-        .joint_limits(file_path='config/joint_limits.yaml')
+        .robot_description(file_path=xacro_file)
+        .robot_description_semantic(file_path=panda_srdf_file)
+        .robot_description_kinematics(file_path=panda_kinematics_file)
+        .joint_limits(file_path=panda_joint_limits_file)
         .planning_scene_monitor(
             publish_robot_description=True,
             publish_robot_description_semantic=True,
