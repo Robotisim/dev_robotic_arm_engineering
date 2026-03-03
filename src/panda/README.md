@@ -55,7 +55,7 @@ ros2 launch panda panda_restricted_pillars.launch.py
 ros2 launch panda panda_restricted_chicane.launch.py
 ```
 
-Use planning group `panda_arm` for arm motion and `hand` for gripper open/close in MoveIt RViz, then click `Plan and Execute`.
+Use planning group `panda_arm` for wrist-reference arm motion or `panda_arm_hand` for fingertip TCP-reference arm motion (`panda_hand_tcp`) in MoveIt RViz. Use `hand` for gripper open/close, then click `Plan and Execute`.
 
 If startup collision appears, increase bringup delays so the ready pose is applied before MoveIt starts:
 
