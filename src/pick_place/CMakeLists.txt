@@ -9,6 +9,7 @@ endif()
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
@@ -27,6 +28,7 @@ include_directories(
 # Dependencies list for target linking
 set(dependencies
 	rclcpp
+	std_srvs
 	sensor_msgs
 	geometry_msgs
 	cv_bridge

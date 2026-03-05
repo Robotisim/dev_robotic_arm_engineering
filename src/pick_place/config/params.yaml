@@ -1,5 +1,7 @@
 /**:
   ros__parameters:
+    use_sim_time: true
+
     # Object Detector Parameters
     object_detector:
       # Depth-based segmentation (detects objects at a certain distance)
@@ -14,33 +16,47 @@
       depth_sample_region: 5 # pixels; N×N region around centroid for depth averaging
 
       # Frame/axis correction for camera-frame pose output
-      output_frame_override: "" # e.g. panda_wrist_eye_link (leave empty to use camera_info frame)
-      axis_order: "zyx" # permutation candidates: xyz, xzy, yxz, yzx, zxy, zyx
+      output_frame_override: "panda_wrist_eye_sensor" # force TF-resolvable frame for object pose output
+      axis_order: "zxy" # permutation candidates: xyz, xzy, yxz, yzx, zxy, zyx
+      # axis_order: "xyz"
       axis_sign_x: 1.0
       axis_sign_y: -1.0
+      # axis_sign_y: 1.0
       axis_sign_z: 1.0
 
     # Pick and Place Executor Parameters
     pick_place_executor:
       arm_group_name: panda_arm
+      end_effector_link: panda_hand_tcp
       hand_group_name: hand
 
       # Phase 5 execution controls
       execute_enabled: true
-      execute_pick_only: false
+      execute_pick_only: true
 
       approach_offset_z: 0.1 # metres above object before descent
       cartesian_step: 0.01 # metres per Cartesian step
+      enforce_min_z: true # reject planning targets below min_allowed_z in base frame
+      min_allowed_z: 0.0 # metres in panda_link0; table-safe floor
+      use_current_ee_orientation_for_pick: false # use detected object orientation for top-down approach
+      use_fixed_pick_orientation: true # force fixed top-down quaternion for pick/pre-grasp
+
+      # Fixed pick orientation in panda_link0 (top-down candidate for panda_hand_tcp)
+      pick_pose:
+        qx: 1.0
+        qy: 0.0
+        qz: 0.0
+        qw: 0.0
 
       # Fixed place location in panda_link0
       place_pose:
         x: 0.4
         y: -0.3
         z: 0.2
-        qx: 1.0
+        qx: 0.0
         qy: 0.0
         qz: 0.0
-        qw: 0.0
+        qw: 1.0
 
       detection_stability_count: 5 # frames before accepting detection
       detection_stability_dist: 0.02 # metres

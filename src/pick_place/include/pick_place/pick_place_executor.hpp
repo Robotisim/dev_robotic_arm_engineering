@@ -6,6 +6,7 @@
 #include <memory>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <rclcpp/rclcpp.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <string>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
@@ -34,11 +35,14 @@ namespace pick_place {
 		bool executeArmPlan(moveit::planning_interface::MoveGroupInterface::Plan const& plan,
 		                    std::string const& stage_name);
 		bool executeHandNamedTarget(std::string const& target_name, std::string const& stage_name);
+		void rerunServiceCallback(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+		                          std::shared_ptr<std_srvs::srv::Trigger::Response> response);
 		void resetDetectionStability();
 		void setState(State new_state);
 		char const* stateToString(State state) const;
 
 		rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr object_pose_sub_;
+		rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr rerun_service_;
 		geometry_msgs::msg::PoseStamped::SharedPtr last_object_pose_;
 		geometry_msgs::msg::PoseStamped last_transformed_pose_;
 		geometry_msgs::msg::PoseStamped stable_object_pose_;
@@ -50,6 +54,11 @@ namespace pick_place {
 		double approach_offset_z_{0.1};
 		double cartesian_step_{0.01};
 		double min_cartesian_fraction_{0.9};
+		double min_allowed_z_{0.0};
+		bool use_current_ee_orientation_for_pick_{true};
+		bool use_fixed_pick_orientation_{true};
+		bool enforce_min_z_{true};
+		geometry_msgs::msg::Quaternion fixed_pick_orientation_;
 		bool execute_enabled_{false};
 		bool execute_pick_only_{true};
 		std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
@@ -62,6 +71,7 @@ namespace pick_place {
 		bool sequence_planned_once_{false};
 		std::string base_frame_;
 		std::string arm_group_name_;
+		std::string end_effector_link_;
 		std::string hand_group_name_;
 		std::string home_named_target_;
 	};

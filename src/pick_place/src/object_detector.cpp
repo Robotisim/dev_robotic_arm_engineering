@@ -248,7 +248,7 @@ namespace pick_place {
 							pose_msg.pose.orientation.x = 0.0;
 							pose_msg.pose.orientation.y = 0.0;
 							pose_msg.pose.orientation.z = 0.0;
-							pose_msg.pose.orientation.w = 1.0;
+							pose_msg.pose.orientation.w = 1.0; // w=1 for identity quaternion
 
 							object_pose_pub_->publish(pose_msg);
 						} else {
