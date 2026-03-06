@@ -4,6 +4,10 @@
 
     # Object Detector Parameters
     object_detector:
+      # Topic names
+      depth_topic: "/camera/depth/image_rect_raw"
+      camera_info_topic: "/camera/depth/camera_info"
+
       # Depth-based segmentation (detects objects at a certain distance)
       depth_min: 0.3 # metres; detect objects closer than this (table surface)
       depth_max: 1.0 # metres; detect objects further than this
@@ -16,12 +20,29 @@
       depth_sample_region: 5 # pixels; N×N region around centroid for depth averaging
 
       # Frame/axis correction for camera-frame pose output
-      output_frame_override: "panda_wrist_eye_sensor" # force TF-resolvable frame for object pose output
-      axis_order: "zxy" # permutation candidates: xyz, xzy, yxz, yzx, zxy, zyx
-      # axis_order: "xyz"
+      output_frame_override: "camera_depth_optical_frame" # force TF-resolvable frame for object pose output
+      # axis_order: "zxy" # permutation candidates: xyz, xzy, yxz, yzx, zxy, zyx
+      axis_order: "xyz"
       axis_sign_x: 1.0
-      axis_sign_y: -1.0
-      # axis_sign_y: 1.0
+      # axis_sign_y: -1.0
+      axis_sign_y: 1.0
+      axis_sign_z: 1.0
+
+    # PCL Object Detector Parameters
+    object_detector_pcl:
+      cloud_topic: "/camera/depth/color/points"
+      publish_debug_clouds: true # publish intermediate clouds for RViz visualization
+      depth_min: 0.3 # metres; minimum Z used for point filtering
+      depth_max: 1.0 # metres; maximum Z used for point filtering
+      voxel_leaf_size: 0.005 # metres; downsampling size
+      plane_distance_threshold: 0.01 # metres; RANSAC inlier threshold for table plane
+      cluster_tolerance: 0.02 # metres; neighbour distance for Euclidean clustering
+      cluster_min_size: 100 # points; ignore smaller clusters
+      cluster_max_size: 25000 # points; ignore larger clusters
+      output_frame_override: "camera_depth_optical_frame" # published frame for detected pose
+      axis_order: "xyz"
+      axis_sign_x: 1.0
+      axis_sign_y: 1.0
       axis_sign_z: 1.0
 
     # Pick and Place Executor Parameters

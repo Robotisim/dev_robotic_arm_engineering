@@ -18,11 +18,14 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common filters segmentation search)
 
 # Include directories
 include_directories(
 	include
 	${OpenCV_INCLUDE_DIRS}
+	${PCL_INCLUDE_DIRS}
 )
 
 # Dependencies list for target linking
@@ -37,6 +40,7 @@ set(dependencies
 	tf2_geometry_msgs
 	moveit_ros_planning_interface
 	OpenCV
+	pcl_conversions
 )
 
 # Build object_detector_node executable (includes all source files)
@@ -53,9 +57,18 @@ add_executable(pick_place_executor_node
 )
 ament_target_dependencies(pick_place_executor_node ${dependencies})
 
+# Build object_detector_pcl_node executable
+add_executable(object_detector_pcl_node
+	src/object_detector_pcl.cpp
+	src/object_detector_pcl_main.cpp
+)
+ament_target_dependencies(object_detector_pcl_node ${dependencies})
+target_link_libraries(object_detector_pcl_node ${PCL_LIBRARIES})
+
 # Install executable
 install(TARGETS
 	object_detector_node
+	object_detector_pcl_node
 	pick_place_executor_node
 	DESTINATION lib/${PROJECT_NAME}
 )

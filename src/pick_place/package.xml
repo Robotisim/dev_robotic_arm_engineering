@@ -18,6 +18,7 @@
   <!-- Vision/Image processing -->
   <depend>cv_bridge</depend>
   <depend>image_geometry</depend>
+  <depend>pcl_conversions</depend>
 
   <!-- TF2 for coordinate transforms -->
   <depend>tf2_ros</depend>
@@ -28,6 +29,7 @@
 
   <!-- System dependencies (OpenCV) -->
   <depend>libopencv-dev</depend>
+  <depend>libpcl-dev</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

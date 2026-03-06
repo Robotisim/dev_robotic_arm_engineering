@@ -17,6 +17,8 @@ namespace pick_place {
 		this->declare_parameter("object_detector.axis_sign_z", 1.0);
 		this->declare_parameter("object_detector.axis_order", "xyz");
 		this->declare_parameter("object_detector.output_frame_override", "");
+		this->declare_parameter("object_detector.depth_topic", "/wrist_eye/depth/image_raw");
+		this->declare_parameter("object_detector.camera_info_topic", "/wrist_eye/depth/camera_info");
 
 		depth_min_ = this->get_parameter("object_detector.depth_min").as_double();
 		depth_max_ = this->get_parameter("object_detector.depth_max").as_double();
@@ -28,6 +30,8 @@ namespace pick_place {
 		axis_sign_z_ = this->get_parameter("object_detector.axis_sign_z").as_double();
 		axis_order_ = this->get_parameter("object_detector.axis_order").as_string();
 		output_frame_override_ = this->get_parameter("object_detector.output_frame_override").as_string();
+		std::string depth_topic = this->get_parameter("object_detector.depth_topic").as_string();
+		std::string camera_info_topic = this->get_parameter("object_detector.camera_info_topic").as_string();
 		if (axis_order_.size() != 3) {
 			RCLCPP_WARN(this->get_logger(), "Invalid axis_order '%s'. Falling back to 'xyz'.", axis_order_.c_str());
 			axis_order_ = "xyz";
@@ -46,20 +50,18 @@ namespace pick_place {
 
 		// Subscribe to depth image and camera info topics
 		depth_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
-		    "/wrist_eye/depth/image_raw", 10, std::bind(&ObjectDetector::depthCallback, this, std::placeholders::_1));
+		    depth_topic, 10, std::bind(&ObjectDetector::depthCallback, this, std::placeholders::_1));
 
 		camera_info_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
-		    "/wrist_eye/depth/camera_info",
-		    10,
-		    std::bind(&ObjectDetector::cameraInfoCallback, this, std::placeholders::_1));
+		    camera_info_topic, 10, std::bind(&ObjectDetector::cameraInfoCallback, this, std::placeholders::_1));
 
 		// Publishers for debug outputs
 		debug_mask_pub_ = this->create_publisher<sensor_msgs::msg::Image>("/pick_place/debug_mask", 10);
 		debug_centroid_pub_ = this->create_publisher<geometry_msgs::msg::Point>("/pick_place/debug_centroid", 10);
 		object_pose_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("/pick_place/object_pose", 10);
 
-		RCLCPP_INFO(this->get_logger(), "Subscribed to /wrist_eye/depth/image_raw");
-		RCLCPP_INFO(this->get_logger(), "Subscribed to /wrist_eye/camera_info");
+		RCLCPP_INFO(this->get_logger(), "Subscribed to %s", depth_topic.c_str());
+		RCLCPP_INFO(this->get_logger(), "Subscribed to %s", camera_info_topic.c_str());
 		RCLCPP_INFO(this->get_logger(), "Publishing debug mask to /pick_place/debug_mask");
 		RCLCPP_INFO(this->get_logger(), "Publishing debug centroid to /pick_place/debug_centroid");
 		RCLCPP_INFO(this->get_logger(), "Publishing object pose to /pick_place/object_pose");
