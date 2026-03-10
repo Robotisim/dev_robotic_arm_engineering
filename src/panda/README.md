@@ -46,7 +46,7 @@ ros2 launch panda panda_pick_and_place_cubes.launch.py
 ros2 launch panda panda_pick_and_place_cubes.launch.py cube_count:=5
 
 # Restricted corridor: narrow passage obstacle-avoidance demo
-ros2 launch panda panda_restricted_corridor.launch.py
+ros2 launch panda panda_multi_object_sequence.launch.py
 
 # Restricted pillars: pillar field obstacle-avoidance demo
 ros2 launch panda panda_restricted_pillars.launch.py
