@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from ament_index_python.packages import get_package_share_directory
-import os
-import math
 
 
 def generate_launch_description():
@@ -27,20 +25,56 @@ def generate_launch_description():
         "use_sim_time", default_value="true", description="Use simulation time"
     )
 
-    # Static transform: Create optical frame from camera link
-    # The camera link has: X=down, Y=left, Z=forward (gripper perspective)
-    # Optical frame needs: X=right, Y=down, Z=forward (depth forward = down to table)
-    #
-    # Transform chain:
-    # 1. Rotate 90° around Z to swap X and Y: X=left, Y=down, Z=forward
-    # 2. Rotate 180° around Y to flip X: X=right, Y=down, Z=forward
-    # Combined: quat from (0, 90, 180) = (-0.5, 0.5, 0.5, 0.5)
-    #
-    # Alternative interpretation (if above doesn't work):
-    # Camera X=down → Optical Z
-    # Camera Y=left → Optical Y
-    # Camera Z=forward → Optical X
-    # This is: 90° around Y = (0, 0.7071068, 0, 0.7071068)
+    camera_frame_arg = DeclareLaunchArgument(
+        "camera_frame",
+        default_value="panda_wrist_eye_sensor",
+        description="Non-optical camera frame that depth images originate from",
+    )
+
+    camera_header_frame_arg = DeclareLaunchArgument(
+        "camera_header_frame",
+        default_value="Panda/panda_link7/panda_wrist_eye_sensor",
+        description="Frame ID found in incoming image headers",
+    )
+
+    publish_header_alias_tf_arg = DeclareLaunchArgument(
+        "publish_header_alias_tf",
+        default_value="true",
+        description="Publish identity TF from camera_header_frame to camera_frame",
+    )
+
+    camera_optical_frame_arg = DeclareLaunchArgument(
+        "camera_optical_frame",
+        default_value="camera_optical_frame",
+        description="Optical frame used by segmentation for depth deprojection",
+    )
+
+    publish_optical_tf_arg = DeclareLaunchArgument(
+        "publish_optical_tf",
+        default_value="true",
+        description="Publish static TF from non-optical camera frame to optical frame",
+    )
+
+    camera_header_alias_publisher = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="camera_header_alias_publisher",
+        arguments=[
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "1",
+            LaunchConfiguration("camera_header_frame"),
+            LaunchConfiguration("camera_frame"),
+        ],
+        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")}],
+        condition=IfCondition(LaunchConfiguration("publish_header_alias_tf")),
+    )
+
+    # REP-103 optical frame convention: x-right, y-down, z-forward.
     camera_optical_frame_publisher = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -48,17 +82,16 @@ def generate_launch_description():
         arguments=[
             "0",
             "0",
-            "0",  # translation (x, y, z)
-            # Option 1: 90° around Y (current)
             "0",
-            "0.7071068",
-            "0",
-            "0.7071068",
-            # Option 2: Try (-0.5, 0.5, 0.5, 0.5) if positions still wrong
-            "panda_wrist_eye_link",
-            "panda_wrist_eye_optical_frame",
+            "-0.5",
+            "0.5",
+            "-0.5",
+            "0.5",
+            LaunchConfiguration("camera_frame"),
+            LaunchConfiguration("camera_optical_frame"),
         ],
         parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")}],
+        condition=IfCondition(LaunchConfiguration("publish_optical_tf")),
     )
 
     # Color segmentation node
@@ -70,13 +103,15 @@ def generate_launch_description():
         parameters=[
             LaunchConfiguration("config_file"),
             {"use_sim_time": LaunchConfiguration("use_sim_time")},
+            {"source_frame": LaunchConfiguration("camera_optical_frame")},
         ],
         remappings=[
-            # Input topics
-            ("/wrist_eye/image_raw", "/wrist_eye/image_raw"),
             # Output topics
             ("~/annotated_image", "/segmentation/annotated_image"),
             ("~/detection_markers", "/segmentation/detection_markers"),
+            ("~/object_poses", "/segmentation/object_poses"),
+            ("~/detections", "/segmentation/detections"),
+            ("~/detected_objects_cloud", "/segmentation/detected_objects_cloud"),
         ],
         arguments=["--ros-args", "--log-level", "info"],
     )
@@ -85,7 +120,12 @@ def generate_launch_description():
         [
             config_file_arg,
             use_sim_time_arg,
-            LogInfo(msg="Starting Color Segmentation Node with Optical Frame"),
+            camera_frame_arg,
+            camera_header_frame_arg,
+            publish_header_alias_tf_arg,
+            camera_optical_frame_arg,
+            publish_optical_tf_arg,
+            camera_header_alias_publisher,
             camera_optical_frame_publisher,
             color_segmentation_node,
         ]
