@@ -367,7 +367,7 @@
     <child link="panda_wrist_eye_marker_link"/>
     <origin rpy="0 -1.5707963267948966 0" xyz="0.065 0 0.0"/>
   </joint>
-  <link name="panda_wrist_eye_link">
+  <link name="panda_wrist_eye_sensor">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -391,10 +391,10 @@
   </link>
   <joint name="panda_wrist_eye_joint" type="fixed">
     <parent link="panda_link8"/>
-    <child link="panda_wrist_eye_link"/>
+    <child link="panda_wrist_eye_sensor"/>
     <origin rpy="0 -1.5707963267948966 0" xyz="0.065 0 0.0"/>
   </joint>
-  <gazebo reference="panda_wrist_eye_link">
+  <gazebo reference="panda_wrist_eye_sensor">
     <sensor name="panda_wrist_eye_sensor" type="rgbd_camera">
       <always_on>true</always_on>
       <update_rate>20.0</update_rate>

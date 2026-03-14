@@ -1,0 +1,52 @@
+/**:
+  ros__parameters:
+    # Area thresholds (in pixels^2)
+    min_area: 500.0
+    max_area: 50000.0
+
+    # Aspect ratio thresholds (width/height)
+    min_aspect_ratio: 0.5
+    max_aspect_ratio: 2.0
+
+    # Morphological operation kernel size
+    morph_kernel_size: 5
+
+    # Enable/disable visualization
+    visualization_enabled: true
+
+    # Show debug windows with masks (set to false in production)
+    debug_images: false
+
+    # Phase 2: Depth processing parameters
+    # Enable/disable 3D localization using depth camera
+    depth_processing_enabled: true
+
+    # Valid depth range (meters)
+    depth_min_valid: 0.1
+    depth_max_valid: 3.0
+
+    # Radius for median depth sampling (pixels)
+    # Larger values = more robust but slower
+    depth_sample_radius: 2
+
+    # Phase 3: Coordinate transformation parameters
+    # Enable/disable transformation to robot base frame
+    transform_enabled: true
+
+    # Target frame for coordinate transformation (robot base frame)
+    # Options: "world", "panda_link0" (both are equivalent for this robot)
+    target_frame: "panda_link0"
+
+    # Source frame (camera optical frame)
+    # The camera publishes images with frame_id in the header
+    # Must match the actual frame name in TF tree
+    # Use optical frame so depth Z-axis points in correct direction
+    source_frame: "panda_wrist_eye_optical_frame"
+
+    # Use camera frame from image header instead of source_frame parameter
+    # If true: uses header.frame_id from camera images
+    # If false: always uses source_frame parameter above (RECOMMENDED)
+    use_image_frame: false
+
+    # TF lookup timeout in seconds
+    tf_timeout: 0.1
