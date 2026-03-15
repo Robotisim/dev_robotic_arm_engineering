@@ -275,8 +275,8 @@ namespace pick_place {
 		this->declare_parameter("pick_place_multi_executor.static_env_offset_pitch", 0.0);
 		this->declare_parameter("pick_place_multi_executor.static_env_offset_yaw", 0.0);
 		this->declare_parameter("pick_place_multi_executor.table_proxy_enabled", true);
-		this->declare_parameter("pick_place_multi_executor.table_proxy_size_x", 0.80);
-		this->declare_parameter("pick_place_multi_executor.table_proxy_size_y", 1.20);
+		this->declare_parameter("pick_place_multi_executor.table_proxy_size_x", 1.50);
+		this->declare_parameter("pick_place_multi_executor.table_proxy_size_y", 0.80);
 		this->declare_parameter("pick_place_multi_executor.table_proxy_size_z", 0.08);
 		this->declare_parameter("pick_place_multi_executor.table_proxy_center_z_offset", 1.0);
 

@@ -90,8 +90,8 @@ namespace pick_place {
 		double static_env_offset_pitch_{0.0};
 		double static_env_offset_yaw_{0.0};
 		bool table_proxy_enabled_{true};
-		double table_proxy_size_x_{0.80};
-		double table_proxy_size_y_{1.20};
+		double table_proxy_size_x_{1.50};
+		double table_proxy_size_y_{0.80};
 		double table_proxy_size_z_{0.08};
 		double table_proxy_center_z_offset_{1.0};
 
