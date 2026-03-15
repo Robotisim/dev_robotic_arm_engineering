@@ -57,6 +57,13 @@ add_executable(pick_place_executor_node
 )
 ament_target_dependencies(pick_place_executor_node ${dependencies})
 
+# Build pick_place_multi_executor_node executable
+add_executable(pick_place_multi_executor_node
+	src/pick_place_multi_executor.cpp
+	src/pick_place_multi_executor_main.cpp
+)
+ament_target_dependencies(pick_place_multi_executor_node ${dependencies})
+
 # Build object_detector_pcl_node executable
 add_executable(object_detector_pcl_node
 	src/object_detector_pcl.cpp
@@ -70,6 +77,7 @@ install(TARGETS
 	object_detector_node
 	object_detector_pcl_node
 	pick_place_executor_node
+	pick_place_multi_executor_node
 	DESTINATION lib/${PROJECT_NAME}
 )
 
