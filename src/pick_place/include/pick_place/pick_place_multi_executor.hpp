@@ -70,6 +70,7 @@ namespace pick_place {
 
 		int64_t max_objects_{3};
 		double approach_offset_z_{0.1};
+		double post_grasp_lift_z_{0.1};
 		double cartesian_step_{0.01};
 		double min_cartesian_fraction_{0.9};
 		double min_allowed_z_{0.0};

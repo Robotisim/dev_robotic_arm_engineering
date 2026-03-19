@@ -208,7 +208,7 @@
     </model>
 
     <!-- ── Object 1: Cube (green) – Zone 1, slightly left of centre ── -->
-    <model name='target_cube'>
+    <!-- <model name='target_cube'>
       <static>false</static>
       <pose>0.26 1.73 1.040 0 0 0</pose>
       <link name='link'>
@@ -236,7 +236,7 @@
           </material>
         </visual>
       </link>
-    </model>
+    </model> -->
 
     <!-- ── Object 2: Cylinder (red) – Zone 2, centred ── -->
     <model name='target_cylinder'>

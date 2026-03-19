@@ -243,6 +243,7 @@ namespace pick_place {
 		this->declare_parameter("pick_place_multi_executor.home_named_target", "ready");
 		this->declare_parameter("pick_place_multi_executor.max_objects", 3);
 		this->declare_parameter("pick_place_multi_executor.approach_offset_z", 0.1);
+		this->declare_parameter("pick_place_multi_executor.post_grasp_lift_z", 0.1);
 		this->declare_parameter("pick_place_multi_executor.cartesian_step", 0.01);
 		this->declare_parameter("pick_place_multi_executor.min_cartesian_fraction", 0.9);
 		this->declare_parameter("pick_place_multi_executor.enforce_min_z", true);
@@ -288,6 +289,7 @@ namespace pick_place {
 		home_named_target_ = this->get_parameter("pick_place_multi_executor.home_named_target").as_string();
 		max_objects_ = this->get_parameter("pick_place_multi_executor.max_objects").as_int();
 		approach_offset_z_ = this->get_parameter("pick_place_multi_executor.approach_offset_z").as_double();
+		post_grasp_lift_z_ = this->get_parameter("pick_place_multi_executor.post_grasp_lift_z").as_double();
 		cartesian_step_ = this->get_parameter("pick_place_multi_executor.cartesian_step").as_double();
 		min_cartesian_fraction_ = this->get_parameter("pick_place_multi_executor.min_cartesian_fraction").as_double();
 		enforce_min_z_ = this->get_parameter("pick_place_multi_executor.enforce_min_z").as_bool();
@@ -671,7 +673,9 @@ namespace pick_place {
 		if (!planGripperAction("close", execute_pick_stages)) {
 			return false;
 		}
-		if (!planCartesianMove(pre_grasp_pose.pose, "retreat_" + index_suffix, execute_place_stages)) {
+		geometry_msgs::msg::Pose post_grasp_pose = pick_pose.pose;
+		post_grasp_pose.position.z += post_grasp_lift_z_;
+		if (!planCartesianMove(post_grasp_pose, "retreat_" + index_suffix, execute_place_stages)) {
 			return false;
 		}
 		if (!planToPoseTarget(place_pose_base, "place_pose_" + index_suffix, execute_place_stages)) {

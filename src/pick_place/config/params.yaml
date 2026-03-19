@@ -116,6 +116,7 @@
       continue_on_failure: true
 
       approach_offset_z: 0.1
+      post_grasp_lift_z: 0.18 # metres; extra lift after grasp before transfer to place
       cartesian_step: 0.01
       min_cartesian_fraction: 0.9
       enforce_min_z: true
