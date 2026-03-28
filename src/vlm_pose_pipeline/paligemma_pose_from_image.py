@@ -5,7 +5,7 @@ import re
 import numpy as np
 import rclpy
 from cv_bridge import CvBridge
-from geometry_msgs.msg import PointStamped
+from geometry_msgs.msg import PoseStamped
 from rclpy.node import Node
 from sensor_msgs.msg import CameraInfo, Image
 from std_msgs.msg import String
@@ -42,15 +42,15 @@ class PaligemmaPoseFromImage(Node):
         )
 
         self.point_pub = self.create_publisher(
-            PointStamped,
-            "/vlm_pose_pipeline/detection_point",
+            PoseStamped,
+            "/pick_place/object_pose",
             10,
         )
 
         self.get_logger().info("Subscribed: /vlm_pose_pipeline/detections")
         self.get_logger().info("Subscribed: /wrist_eye/depth/image_raw")
         self.get_logger().info("Subscribed: /wrist_eye/depth/camera_info")
-        self.get_logger().info("Publishing: /vlm_pose_pipeline/detection_point")
+        self.get_logger().info("Publishing: /pick_place/object_pose")
 
     def depth_callback(self, msg):
         self.latest_depth_msg = msg
@@ -108,17 +108,17 @@ class PaligemmaPoseFromImage(Node):
         y_m = ((v_center - cy) / fy) * depth_m
         z_m = depth_m
 
-        point_msg = PointStamped()
-        point_msg.header.stamp = self.get_clock().now().to_msg()
-        point_msg.header.frame_id = (
-            camera_info.header.frame_id
-            if camera_info.header.frame_id
-            else self.latest_depth_msg.header.frame_id
-        )
-        point_msg.point.x = float(x_m)
-        point_msg.point.y = float(y_m)
-        point_msg.point.z = float(z_m)
-        self.point_pub.publish(point_msg)
+        pose_msg = PoseStamped()
+        pose_msg.header.stamp = self.get_clock().now().to_msg()
+        pose_msg.header.frame_id = "panda_wrist_eye_sensor"
+        pose_msg.pose.position.x = float(x_m)
+        pose_msg.pose.position.y = float(y_m)
+        pose_msg.pose.position.z = float(z_m)
+        pose_msg.pose.orientation.x = 1.0
+        pose_msg.pose.orientation.y = 0.0
+        pose_msg.pose.orientation.z = 0.0
+        pose_msg.pose.orientation.w = 0.0
+        self.point_pub.publish(pose_msg)
 
         self.get_logger().info(
             "Detection pixel bbox=(%d,%d)-(%d,%d), center=(%d,%d), point=(%.3f, %.3f, %.3f) m"
