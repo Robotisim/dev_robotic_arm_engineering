@@ -110,14 +110,14 @@ class PaligemmaPoseFromImage(Node):
 
         pose_msg = PoseStamped()
         pose_msg.header.stamp = self.get_clock().now().to_msg()
-        pose_msg.header.frame_id = "panda_wrist_eye_sensor"
+        pose_msg.header.frame_id = "panda_wrist_eye_optical_frame"
         pose_msg.pose.position.x = float(x_m)
         pose_msg.pose.position.y = float(y_m)
         pose_msg.pose.position.z = float(z_m)
-        pose_msg.pose.orientation.x = 1.0
+        pose_msg.pose.orientation.x = 0.0
         pose_msg.pose.orientation.y = 0.0
         pose_msg.pose.orientation.z = 0.0
-        pose_msg.pose.orientation.w = 0.0
+        pose_msg.pose.orientation.w = 1.0
         self.point_pub.publish(pose_msg)
 
         self.get_logger().info(

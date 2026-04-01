@@ -394,6 +394,13 @@
     <child link="panda_wrist_eye_sensor"/>
     <origin rpy="0 -1.5707963267948966 0" xyz="0.065 0 0.0"/>
   </joint>
+  <link name="panda_wrist_eye_optical_frame">
+  </link>
+  <joint name="panda_wrist_eye_optical_joint" type="fixed">
+    <parent link="panda_wrist_eye_sensor"/>
+    <child link="panda_wrist_eye_optical_frame"/>
+    <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0"/>
+  </joint>
   <gazebo reference="panda_wrist_eye_sensor">
     <sensor name="panda_wrist_eye_sensor" type="rgbd_camera">
       <always_on>true</always_on>
