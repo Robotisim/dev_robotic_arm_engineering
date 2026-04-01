@@ -91,8 +91,8 @@
 
       # Fixed place location in panda_link0
       place_pose:
-        x: 0.4
-        y: -0.3
+        x: 0.50
+        y: -0.05
         z: 0.2
         qx: 1.0
         qy: 0.0

@@ -18,6 +18,7 @@ class PaligemmaPoseFromImage(Node):
 
         self.latest_depth_msg = None
         self.latest_camera_info_msg = None
+        self.last_pose_msg = None
 
         self.loc_pattern = re.compile(r"<loc(\d{4})>")
         self.loc_bins = 1024
@@ -46,6 +47,7 @@ class PaligemmaPoseFromImage(Node):
             "/pick_place/object_pose",
             10,
         )
+        self.republish_timer = self.create_timer(0.1, self.republish_last_pose)
 
         self.get_logger().info("Subscribed: /vlm_pose_pipeline/detections")
         self.get_logger().info("Subscribed: /wrist_eye/depth/image_raw")
@@ -57,6 +59,10 @@ class PaligemmaPoseFromImage(Node):
 
     def camera_info_callback(self, msg):
         self.latest_camera_info_msg = msg
+
+    def republish_last_pose(self):
+        if self.last_pose_msg is not None:
+            self.point_pub.publish(self.last_pose_msg)
 
     def detections_callback(self, msg):
         if self.latest_depth_msg is None or self.latest_camera_info_msg is None:
@@ -109,7 +115,6 @@ class PaligemmaPoseFromImage(Node):
         z_m = depth_m
 
         pose_msg = PoseStamped()
-        pose_msg.header.stamp = self.get_clock().now().to_msg()
         pose_msg.header.frame_id = "panda_wrist_eye_optical_frame"
         pose_msg.pose.position.x = float(x_m)
         pose_msg.pose.position.y = float(y_m)
@@ -118,6 +123,7 @@ class PaligemmaPoseFromImage(Node):
         pose_msg.pose.orientation.y = 0.0
         pose_msg.pose.orientation.z = 0.0
         pose_msg.pose.orientation.w = 1.0
+        self.last_pose_msg = pose_msg
         self.point_pub.publish(pose_msg)
 
         self.get_logger().info(
