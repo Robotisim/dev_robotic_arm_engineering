@@ -5,6 +5,68 @@
 
 Joint Control, Safe Motion, Calibration, and Forward Kinematics
 
+## Instructor Flow Design Answers
+
+**Questions Based Instructor Flow Design?**
+
+* Start with the question: once the model exists, how do joints move safely?
+* Teach in the rhythm `controller config -> launch -> command -> joint state -> TF result`.
+* Keep lessons focused on safe joint-space control before Cartesian targets or planning.
+
+**What is this module about?**
+
+* This module is about commanding robot joints and verifying the motion through feedback.
+* Students learn `ros2_control`, controller manager, joint trajectory controllers, joint limits, and `/joint_states`.
+* Forward kinematics is introduced as the connection between joint angles and end-effector pose.
+
+**What final project outcome should students achieve?**
+
+* Students should run stick arm and Panda controllers in Gazebo.
+* Students should send a safe joint command and confirm the measured joint state changed.
+* Students should explain how joint motion updates TF and the end-effector pose.
+
+**What concepts must the instructor explain?**
+
+* Explain controller manager, joint state broadcaster, trajectory controller, command interfaces, and state interfaces.
+* Explain joint names, joint order, joint limits, calibration, homing, offsets, and safe ready poses.
+* Explain FK as `joint angles -> transforms -> end-effector pose`, then compare it with TF.
+
+**What exact code/package/files should be shown?**
+
+* Show `robotic_arm_control/config/stick_arm/controllers.yaml`.
+* Show `robotic_arm_control/config/panda/controllers_position.yaml`, `initial_joint_positions.yaml`, and `joint_limits.yaml`.
+* Show `robotic_arm_bringup/launch/sim_robot.launch.py` and `robotic_arm_control/example_position.cpp`.
+
+**What commands should be run?**
+
+* Run `ros2 launch robotic_arm_bringup sim_robot.launch.py robot:=stick_arm`.
+* Run `ros2 control list_controllers` and `ros2 topic echo /joint_states`.
+* Run `ros2 launch robotic_arm_bringup sim_robot.launch.py robot:=panda` for the realistic controller comparison.
+
+**What visual/demo result should appear?**
+
+* Gazebo should show the robot spawned with active controllers.
+* RViz or TF should show the arm pose changing as joint states update.
+* Terminal output should show loaded controllers and live joint positions.
+
+**What mistakes should the instructor avoid?**
+
+* Do not jump into IK or Cartesian planning before students understand joint commands.
+* Do not ignore joint order, because correct names with wrong order still create wrong motion.
+* Do not present calibration as optional trivia; connect offsets and homing to repeatable motion.
+
+**What should the student understand by the end of each lesson?**
+
+* Students should know which controller or topic caused the observed joint motion.
+* Students should connect command, measured state, TF, and FK in one feedback loop.
+* Students should be able to rerun the demo and debug a missing controller or wrong joint name.
+
+**Package Names And Responsibilities?**
+
+* `robotic_arm_control` owns controller YAML, joint limits, and controller examples.
+* `robotic_arm_bringup` owns the student launch commands for controlled simulation.
+* `robotic_arm_description` supplies the joint names and limits that control depends on.
+
 ## Core module description
 
 Module 2 teaches students how to safely command robotic arm joints after the model has been created and validated. Students move from visualization to controlled joint motion using `ros2_control`, controller manager, joint trajectory commands, `/joint_states`, joint limits, and safe movement practices.

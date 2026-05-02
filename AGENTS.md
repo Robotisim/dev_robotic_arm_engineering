@@ -26,7 +26,7 @@ There are two documentation layers. Use them in this order.
    docs/Module 5 _ Pick and Place with Fixed Targets.md
    docs/Module 6 _ RGB-D Perception, Calibration, and Scene Mapping.md
    docs/Module 7 _ Multiple robot task execution.md
-   docs/Module 8 _ LLM-VLM-Based Robot Control and Language-to-Skill Tasking.md
+   docs/Module 8 _ LLM-VLM-Based Robot Action Using Vision.md
    ```
 
 2. Lesson plans in `docs/Lesson Plans/`
@@ -63,7 +63,7 @@ Module 4: The robot can plan safe motions with MoveIt.
 Module 5: The robot can pick known objects using fixed targets.
 Module 6: The robot can detect objects and pick using perception.
 Module 7: Multiple robots can share a scene and coordinate tasks.
-Module 8: LLM/VLM systems can command robotic procedures through safe skills.
+Module 8: LLM/VLM systems can use vision to request visual pick-and-place actions.
 ```
 
 Avoid turning early modules into advanced implementation projects. Each module
@@ -168,10 +168,10 @@ Module 7 should focus on multi-robot task execution:
 namespaces -> separate TF trees -> shared world -> task assignment -> coordination
 ```
 
-Module 8 should focus on LLM/VLM integration:
+Module 8 should focus on LLM/VLM-based visual robot action:
 
 ```text
-language/image input -> object grounding -> validated skill -> robot procedure
+language/image input -> visual target -> RGB-D pose -> pick/place procedure
 ```
 
 ## Lecture Production Notes
@@ -212,7 +212,7 @@ before treating it as a production-ready lecture.
 - Prefer `robotic_arm_*` package names in all new docs and commands.
 - Keep deprecated package names only in wrapper or migration notes.
 - Keep Module 7 as multi-robot task execution, not failure-recovery/evaluation.
-- Keep Module 8 as LLM/VLM-based robot control and language-to-skill tasking.
+- Keep Module 8 as LLM/VLM-based robot action using vision and visual pick/place.
 - Do not reintroduce `robotic_arm_evaluation` unless the curriculum explicitly
   returns to a logging/evaluation module.
 - Keep docs practical: every important concept should point to a file, launch
@@ -242,4 +242,3 @@ ros2 launch robotic_arm_bringup moveit_robot.launch.py robot:=panda --show-args
 ros2 launch robotic_arm_vision segmentation.launch.py --show-args
 ros2 launch robotic_arm_manipulation pick_place_multi_object.launch.py --show-args
 ```
-

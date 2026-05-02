@@ -6,6 +6,68 @@
 
 Inverse Kinematics, Cartesian Trajectories, Workspace Validation, and Dynamics Basics
 
+## Instructor Flow Design Answers
+
+**Questions Based Instructor Flow Design?**
+
+* Start with the question: how do we move the gripper to a Cartesian target?
+* Teach in the rhythm `target -> workspace check -> IK -> waypoints -> marker preview -> trajectory`.
+* Keep MoveIt as a comparison after students see the custom IK and trajectory pipeline.
+
+**What is this module about?**
+
+* This module is about moving from joint-space commands to task-space motion.
+* Students learn IK, Cartesian targets, waypoints, trajectory timing, marker previews, and workspace rejection.
+* Dynamics basics are included only as intuition for why real robot motion is harder than geometry alone.
+
+**What final project outcome should students achieve?**
+
+* Students should run Panda IK demos for point-to-point, straight line, circle, rectangle, and invalid targets.
+* Students should preview paths with markers before sending a trajectory.
+* Students should explain why unreachable or unsafe targets must be rejected before execution.
+
+**What concepts must the instructor explain?**
+
+* Explain task space, end-effector pose, IK seed, reachability, joint limits, and singularities at a visual level.
+* Explain waypoint discretization, trajectory timing, `JointTrajectory`, and `/motion/status`.
+* Explain how gravity, payload, and tuning affect real execution without deriving full dynamics.
+
+**What exact code/package/files should be shown?**
+
+* Show `robotic_arm_motion/motion/panda_kinematics.py` and `trajectory_utils.py`.
+* Show `robotic_arm_motion/motion/demo_01_point_to_point.py` through `demo_05_workspace_reject.py`.
+* Show `robotic_arm_motion/launch/demo_01_point_to_point.launch.py` through `demo_06_moveit_pose_goal.launch.py`.
+
+**What commands should be run?**
+
+* Run `ros2 launch robotic_arm_motion demo_01_point_to_point.launch.py`.
+* Run `ros2 launch robotic_arm_motion demo_02_straight_line.launch.py` and `demo_04_rectangle_shape.launch.py`.
+* Run `ros2 launch robotic_arm_motion demo_05_workspace_reject.launch.py`, then `demo_06_moveit_pose_goal.launch.py`.
+
+**What visual/demo result should appear?**
+
+* RViz should show marker previews for the intended Cartesian path.
+* The Panda should follow the accepted trajectory in simulation or visualization.
+* Invalid workspace targets should be rejected with clear status instead of unsafe motion.
+
+**What mistakes should the instructor avoid?**
+
+* Do not teach MoveIt first, because students need to see what MoveIt automates.
+* Do not hide failed targets; workspace rejection is one of the main learning outcomes.
+* Do not turn dynamics into a full math derivation in this module.
+
+**What should the student understand by the end of each lesson?**
+
+* Students should know how a Cartesian target becomes joint values.
+* Students should connect each path shape to the code that generated its waypoints.
+* Students should be able to rerun the demo and debug unreachable targets or missing markers.
+
+**Package Names And Responsibilities?**
+
+* `robotic_arm_motion` owns IK, trajectory demos, marker previews, and motion utilities.
+* `robotic_arm_bringup` owns the Panda simulation and MoveIt-capable bringup used underneath.
+* `robotic_arm_control` supplies the trajectory controllers that execute joint commands.
+
 ## Core module description
 
 Module 3 teaches students how to move from joint-space control to task-space motion. Instead of saying “move joint 1 and joint 2,” students learn how to say “move the gripper to this point” and understand how IK converts that Cartesian target into joint values.

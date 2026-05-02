@@ -4,6 +4,68 @@
 
 **MoveIt 2 Planning, Collision Avoidance, and Planning Scene**
 
+## Instructor Flow Design Answers
+
+**Questions Based Instructor Flow Design?**
+
+* Start with the question: how does the robot plan safely when obstacles and constraints exist?
+* Teach in the rhythm `SRDF -> planning group -> planning scene -> planner -> trajectory -> execution`.
+* Keep Panda as the primary robot because the current MoveIt configuration is Panda-first.
+
+**What is this module about?**
+
+* This module is about using MoveIt 2 for collision-aware planning and execution.
+* Students learn SRDF, planning groups, kinematics plugins, OMPL, planning scenes, and controller execution.
+* The module explains how MoveIt automates IK, collision checking, and trajectory planning.
+
+**What final project outcome should students achieve?**
+
+* Students should launch Panda with MoveIt in RViz.
+* Students should add or inspect collision objects and plan safe motions around them.
+* Students should execute planned trajectories and explain why failed plans are useful feedback.
+
+**What concepts must the instructor explain?**
+
+* Explain URDF vs SRDF, planning groups, end-effectors, named states, and disabled collision pairs.
+* Explain kinematics plugins, OMPL planner settings, planning scene objects, and start-state validity.
+* Explain how MoveIt maps a planned trajectory to controllers for execution.
+
+**What exact code/package/files should be shown?**
+
+* Show `robotic_arm_moveit_config/config/panda/panda.srdf.xacro`.
+* Show `robotic_arm_moveit_config/config/panda/kinematics.yaml`, `ompl_planning.yaml`, and `moveit_controller_manager.yaml`.
+* Show `robotic_arm_bringup/launch/moveit_robot.launch.py` and `panda_ik_gazebo.launch.py`.
+
+**What commands should be run?**
+
+* Run `ros2 launch robotic_arm_bringup moveit_robot.launch.py robot:=panda`.
+* Run `ros2 launch robotic_arm_bringup moveit_robot.launch.py robot:=panda --show-args` when explaining launch inputs.
+* Use the RViz MotionPlanning panel to plan joint-space and pose-goal motions.
+
+**What visual/demo result should appear?**
+
+* RViz should show Panda, the MoveIt planning scene, and the MotionPlanning interface.
+* A planned trajectory should appear before execution.
+* Collision objects or constraints should cause path changes or clear planning failures.
+
+**What mistakes should the instructor avoid?**
+
+* Do not make pick/place, perception, or gripper timing the main lesson.
+* Do not skip SRDF and planning groups, because they explain what MoveIt is allowed to move.
+* Do not treat planning failure as a bug until start state, goal, collision, and controllers are checked.
+
+**What should the student understand by the end of each lesson?**
+
+* Students should know which MoveIt config file explains the behavior they see in RViz.
+* Students should connect planning requests to IK, collision checking, and trajectory execution.
+* Students should be able to rerun the demo and debug a missing planning group or invalid goal.
+
+**Package Names And Responsibilities?**
+
+* `robotic_arm_moveit_config` owns Panda SRDF, kinematics, OMPL, controller mapping, and MoveIt RViz configs.
+* `robotic_arm_bringup` owns the public MoveIt launch command.
+* `robotic_arm_control` and `robotic_arm_description` provide controllers and robot geometry for MoveIt.
+
 ## Core module description
 
 Module 4 teaches students how to use **MoveIt 2** to plan and execute safe robot motions. In Module 3, students manually understood IK and trajectories. In Module 4, they learn how MoveIt automates many of those steps using planning groups, SRDF, kinematics plugins, OMPL planners, planning scenes, collision checking, and controller execution.

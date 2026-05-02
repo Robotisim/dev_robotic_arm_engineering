@@ -8,7 +8,7 @@ This package owns:
 - gripper behavior helpers
 - object pose consumers that use `/segmentation/object_poses`
 - VLM/PaliGemma pose pipeline scripts under `scripts/vlm_pose_pipeline/`
-- future language-to-skill routing
+- LLM/VLM visual pick-and-place helpers
 
 ## Run
 

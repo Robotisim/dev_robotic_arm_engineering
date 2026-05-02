@@ -1,7 +1,7 @@
 # Robotic Arm Engineering Workspace
 
 ROS 2 Jazzy learning workspace for robotic arm simulation, control, motion,
-perception, manipulation, multi-robot coordination, and VLA-style task routing.
+perception, manipulation, multi-robot coordination, and LLM/VLM visual pick-place tasking.
 
 ## Package Layout
 

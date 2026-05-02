@@ -5,6 +5,68 @@
 
 **RGB-D Perception, Camera Calibration, Scene Mapping, and Perception-Driven Manipulation**
 
+## Instructor Flow Design Answers
+
+**Questions Based Instructor Flow Design?**
+
+* Start with the question: how does the robot replace fixed targets with detected object poses?
+* Teach in the rhythm `RGB-D -> segmentation -> depth point -> camera frame -> robot base frame -> pick/place`.
+* Keep the lesson focused on perception-to-robot coordinates, not general computer vision.
+
+**What is this module about?**
+
+* This module is about using RGB-D perception to estimate object poses at runtime.
+* Students learn camera topics, depth, intrinsics, extrinsics, segmentation, TF transforms, markers, and pose publishing.
+* The perception result becomes a robot-frame target for MoveIt and pick/place.
+
+**What final project outcome should students achieve?**
+
+* Students should run the RGB-D segmentation pipeline and see object detections.
+* Students should convert a pixel and depth value into a 3D pose in the robot base frame.
+* Students should feed a detected pose into the manipulation pipeline or clearly identify missing integration pieces.
+
+**What concepts must the instructor explain?**
+
+* Explain RGB image, depth image, camera info, optical frames, intrinsics, extrinsics, and RGB/depth alignment.
+* Explain segmentation, centroid depth lookup, camera-frame 3D points, TF transforms, and object pose topics.
+* Explain calibration checks, PCD snapshots, RViz markers, and planning-scene updates as debugging tools.
+
+**What exact code/package/files should be shown?**
+
+* Show `robotic_arm_vision/launch/segmentation.launch.py` and `robotic_arm_vision/config/segmentation_params.yaml`.
+* Show `robotic_arm_vision/src/color_segmentation_node.cpp` and `robotic_arm_vision/scripts/camera_calibration_check.py`.
+* Show `robotic_arm_vision/robotic_arm_vision/pcd_snapshot.py` and `robotic_arm_vision/launch/moveit_pose_controller.launch.py`.
+
+**What commands should be run?**
+
+* Run `ros2 launch robotic_arm_bringup multi_object_world.launch.py`.
+* Run `ros2 launch robotic_arm_vision segmentation.launch.py`.
+* Run `ros2 topic echo /segmentation/object_poses` and inspect RViz image, marker, and point cloud output.
+
+**What visual/demo result should appear?**
+
+* Camera image or annotated output should show segmented objects.
+* RViz should show markers or poses in the correct robot/world location.
+* The detected pose should be usable as a planning or pick target once integration is active.
+
+**What mistakes should the instructor avoid?**
+
+* Do not turn this into a deep-learning vision module.
+* Do not ignore frame direction, timestamp, optical-frame conventions, or calibration errors.
+* Do not claim Octomap or full detect-to-pick integration is production-ready unless the code path is verified.
+
+**What should the student understand by the end of each lesson?**
+
+* Students should know how one perception topic or frame affects the final robot target.
+* Students should connect a detected pixel to depth, camera-frame pose, TF, and robot-base pose.
+* Students should be able to rerun the demo and debug bad segmentation, wrong frames, or shifted point clouds.
+
+**Package Names And Responsibilities?**
+
+* `robotic_arm_vision` owns segmentation, pose estimation, calibration checks, PCD snapshots, and perception launch files.
+* `robotic_arm_bringup` owns the world launch used to generate camera data.
+* `robotic_arm_manipulation` consumes detected poses for perception-driven pick/place.
+
 ## Core module description
 
 Module 6 teaches students how to replace fixed target poses with **runtime perception**. Students learn how RGB-D cameras produce image, depth, and point cloud data; how camera frames connect to the robot base; how color/depth segmentation estimates object poses; how those poses are transformed into the robot frame; and how the robot uses those detected poses for planning and pick/place.

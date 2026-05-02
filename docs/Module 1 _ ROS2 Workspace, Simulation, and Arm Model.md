@@ -1,9 +1,71 @@
 
 # Module 1 Scope
 
-## Module 1 title
+## Module 1
 
 ROS 2 Robotic Arm Model, URDF, TF, RViz, and Simulation Bringup
+
+## Instructor Flow Design Answers
+
+**Questions Based Instructor Flow Design?**
+
+* Start with the question: how does ROS 2 know the robot body before it moves?
+* Teach in the rhythm `concept -> file -> launch command -> observed behavior -> debugging idea`.
+* Keep every lesson tied to robot description, TF, RViz, Gazebo bringup, and model validation.
+
+**What is this module about?**
+
+* This module is about building the robot's body description in ROS 2.
+* Students learn links, joints, frames, URDF/Xacro, `robot_description`, TF, RViz, and Gazebo spawning.
+* The stick arm is the beginner model, and Panda is the realistic comparison model.
+
+**What final project outcome should students achieve?**
+
+* Students should launch the stick arm and Panda in RViz with a correct TF tree.
+* Students should launch the same models in Gazebo and recognize whether the model spawned correctly.
+* Students should explain how a Xacro file becomes a visible simulated robot.
+
+**What concepts must the instructor explain?**
+
+* Explain URDF/Xacro structure, links, joints, origins, axes, limits, visual, collision, and inertial tags.
+* Explain `robot_state_publisher`, `joint_state_publisher_gui`, `/robot_description`, `/tf`, and `/joint_states`.
+* Explain why incorrect frames, joint axes, mesh paths, or origins make later control and planning fail.
+
+**What exact code/package/files should be shown?**
+
+* Show `robotic_arm_description/urdf/stick_arm/stick_arm_4dof.urdf.xacro` first.
+* Show `robotic_arm_description/urdf/panda/panda.xacro.urdf` and the Panda meshes under `robotic_arm_description/meshes/panda/`.
+* Show `robotic_arm_bringup/launch/view_robot.launch.py`, `sim_robot.launch.py`, and `robotic_arm_sim/worlds/empty.world`.
+
+**What commands should be run?**
+
+* Run `ros2 launch robotic_arm_bringup view_robot.launch.py robot:=stick_arm`.
+* Run `ros2 launch robotic_arm_bringup view_robot.launch.py robot:=panda`.
+* Run `ros2 launch robotic_arm_bringup sim_robot.launch.py robot:=stick_arm` and then `robot:=panda`.
+
+**What visual/demo result should appear?**
+
+* RViz should show the stick arm with frames that move when the joint GUI changes.
+* RViz should show the Panda model with a larger realistic link and mesh structure.
+* Gazebo should show the selected robot spawned in the world without missing meshes or broken poses.
+
+**What mistakes should the instructor avoid?**
+
+* Do not teach IK, MoveIt, controllers, or pick/place as core Module 1 topics.
+* Do not treat launch commands as magic; always trace the command back to launch and Xacro files.
+* Do not start with Panda complexity before students understand the stick arm structure.
+
+**What should the student understand by the end of each lesson?**
+
+* Students should know which file produced the robot behavior they just observed.
+* Students should connect each ROS concept to a concrete topic, frame, launch file, or RViz result.
+* Students should leave each lesson able to rerun the demo and debug one model or TF issue.
+
+**Package Names And Responsibilities?**
+
+* `robotic_arm_description` owns URDF/Xacro, meshes, model scripts, and robot body definitions.
+* `robotic_arm_bringup` owns student-facing launch files and RViz startup.
+* `robotic_arm_sim` owns Gazebo worlds, SDF resources, and simulation assets.
 
 ## Core module description
 
@@ -117,4 +179,3 @@ Robot structure → URDF/Xacro → robot_description → TF → RViz → Panda c
 ```
 
 Do not make hardware or controller implementation a required part of Module 1. Mention it as a preview only.
-
