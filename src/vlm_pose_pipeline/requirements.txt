@@ -1,0 +1,8 @@
+ is # Python 3.12 compatible dependencies for PaliGemma pose-from-image script
+numpy<2.0
+torch>=2.2,<3.0
+transformers>=4.41,<5.0
+accelerate>=0.30
+pillow>=10.0
+opencv-python>=4.9
+pyyaml>=6.0

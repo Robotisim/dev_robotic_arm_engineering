@@ -73,7 +73,7 @@
 
       # Phase 5 execution controls
       execute_enabled: true
-      execute_pick_only: true
+      execute_pick_only: false
 
       approach_offset_z: 0.1 # metres above object before descent
       cartesian_step: 0.01 # metres per Cartesian step
@@ -91,8 +91,8 @@
 
       # Fixed place location in panda_link0
       place_pose:
-        x: 0.4
-        y: -0.3
+        x: 0.50
+        y: -0.05
         z: 0.2
         qx: 1.0
         qy: 0.0
