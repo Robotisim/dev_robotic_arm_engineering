@@ -11,15 +11,9 @@ def generate_launch_description() -> LaunchDescription:
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     PathJoinSubstitution(
-                        [FindPackageShare('panda'), 'launch', 'panda_pick_and_place.launch.py']
+                        [FindPackageShare('robotic_arm_bringup'), 'launch', 'panda_restricted_pillars.launch.py']
                     )
-                ),
-                launch_arguments={
-                    'world_file': PathJoinSubstitution(
-                        [FindPackageShare('panda'), 'worlds', 'restricted_pillars_env.sdf']
-                    ),
-                    'bridge_external_camera': 'false',
-                }.items(),
+                )
             )
         ]
     )

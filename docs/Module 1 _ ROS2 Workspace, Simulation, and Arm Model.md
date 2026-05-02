@@ -25,15 +25,16 @@
   - Then show the same concept on the __Panda__ (realistic joint count + standard tooling support).
 
 - __Deliverables (Must Produce):__
-  - `src/toy_arm_description/` (minimal URDF/Xacro you author from scratch)
-  - Panda reference bringup (dependency notes + a launch that displays Panda in RViz)
-  - `src/arm_bringup/` (launch files for RViz + sim, for both toy arm and Panda)
-  - `src/arm_hardware/` (skeleton `ros2_control` hardware interface plugin)
+  - `src/robotic_arm_description/` (stick-arm and Panda URDF/Xacro plus meshes)
+  - Panda reference bringup through `robotic_arm_bringup`
+  - `src/robotic_arm_bringup/` (launch files for RViz + sim, for both stick arm and Panda)
+  - `src/robotic_arm_sim/` (Gazebo worlds, object models, tables, and camera scenes)
+  - `src/robotic_arm_hardware/` (skeleton `ros2_control` hardware interface package)
   - One short demo video:
     - RViz showing toy arm and Panda with TF tree + joint sliders moving without TF errors
 
 - __Key Steps (Execution Path):__
-  - Create ROS2 workspace + packages (`toy_arm_description`, `arm_bringup`, `arm_hardware`)
+  - Create ROS2 workspace + packages (`robotic_arm_description`, `robotic_arm_bringup`, `robotic_arm_hardware`)
   - Model the toy arm links/joints + limits + inertias (good-enough first pass)
   - Launch RViz with `robot_state_publisher` + `joint_state_publisher_gui`
   - Bring up Panda in RViz and compare TF tree + joint naming vs the toy arm
@@ -43,11 +44,11 @@
 - __Sim vs Real (Consistency Checklist):__
   - __What stays the same:__ URDF frames, joint names, joint limits, controller interfaces, TF conventions.
   - __What changes in real:__ latency, encoder noise, offsets, hard stops, safety limits, wiring/power issues.
-  - __Minimum validation:__ `check_urdf` passes + RViz shows a stable TF tree (no frame spam) + `colcon build` succeeds for `arm_hardware`.
+  - __Minimum validation:__ `check_urdf` passes + RViz shows a stable TF tree (no frame spam) + `colcon build` succeeds for `robotic_arm_hardware`.
   - __Failure modes + checks (at least 3):__
     - TF tree broken → verify `robot_state_publisher` is running and `robot_description` is set.
     - Joints not moving in RViz → verify joint names match URDF and `joint_state_publisher_gui` publishes.
-    - `arm_hardware` plugin not found → verify `pluginlib` export, install targets, and `ament` index registration.
+    - `robotic_arm_hardware` plugin not found → verify `pluginlib` export, install targets, and `ament` index registration.
 
 ---
 
@@ -80,7 +81,7 @@
 ## 3. Concrete–Pictorial–Abstract (CPA) Breakdown
 
 ### Concrete (Hands-On / Doing)
-- Run `colcon build` + `ros2 launch arm_bringup view_arm.launch.py`
+- Run `colcon build` + `ros2 launch robotic_arm_bringup view_robot.launch.py robot:=stick_arm`
 - Move joints in `joint_state_publisher_gui` and observe end-effector motion
 
 ### Pictorial (Visual / Intuition)
@@ -121,7 +122,7 @@
    - __Notes__: `Notes/part_1_kinematics.pdf` p.2-9 (rotation + homogeneous transforms)
 
 4. __M1_V04_Building_Toy_Arm_and_Bringing_Up_Panda_in_RViz_[S]__
-   - __Content__: Create `toy_arm_description`, write the toy URDF/Xacro, launch RViz, then bring up Panda and compare joint names + frames side-by-side.
+   - __Content__: Use `robotic_arm_description`, write or inspect the stick-arm URDF/Xacro, launch RViz, then bring up Panda and compare joint names + frames side-by-side.
    - __Notes__: `Notes/part_1_kinematics.pdf` p.2-9 (frames/transforms) + p.10 (FK concept)
 
 5. __M1_V05_Validation_check_urdf_TF_and_Common_Fixes_[S]__
@@ -130,7 +131,7 @@
 
 #### Part B: Real System / Hardware
 6. __M1_V06_ros2_control_Hardware_Plugin_Skeleton_[S]__
-   - __Content__: Generate `arm_hardware` package, implement minimal interfaces, and confirm it compiles.
+   - __Content__: Generate or extend the `robotic_arm_hardware` package, implement minimal interfaces, and confirm it compiles.
    - __Notes__: (ROS2/`ros2_control` architecture; not covered in `Notes/`)
 
 7. __M1_V07_Loading_the_Plugin_and_Debugging_Interfaces_[S]__
@@ -151,12 +152,12 @@
 
 2. __M1_A02_Bringup_Launches_Toy_and_Panda__
    - __Goal__: one command launches RViz view for each robot (toy + Panda).
-   - __Steps__: create `arm_bringup` launches; set params; document usage.
+   - __Steps__: use `robotic_arm_bringup` launches; set params; document usage.
    - __Submission__: PR + 30–60s screen recording showing both launches working.
    - __Pass Criteria__: both `ros2 launch ...` commands work on a clean rebuild.
 
 3. __M1_A03_controllers_install__
-   - __Goal__: `arm_hardware` builds as a plugin.
+   - __Goal__: `robotic_arm_hardware` builds as a plugin.
    - __Steps__: implement skeleton; export plugin; build.
    - __Submission__: PR + build log snippet.
    - __Pass Criteria__: `colcon build` succeeds; plugin export is present.
@@ -171,7 +172,7 @@
 
 ## Final Summary
 
-- You have a ROS2 workspace with `arm_description` + `arm_bringup`.
+- You have a ROS2 workspace with `robotic_arm_description` + `robotic_arm_bringup`.
 - Your arm model visualizes correctly in RViz with a stable TF tree and joint motion.
 - You have a compiling `ros2_control` hardware plugin skeleton ready for real comms.
 - Next module adds real joint control paths (position/velocity) with safety limits.

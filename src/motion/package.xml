@@ -2,32 +2,16 @@
 <package format="3">
   <name>motion</name>
   <version>0.1.0</version>
-  <description>Numbered ROS 2 trajectory + IK lecture nodes for Panda arm motion demos.</description>
-  <maintainer email="maintainer@example.com">motion Maintainer</maintainer>
+  <description>Deprecated compatibility wrappers for robotic_arm_motion.</description>
+  <maintainer email="maintainer@example.com">Robotic Arm Maintainer</maintainer>
   <license>Apache-2.0</license>
 
-  <buildtool_depend>ament_python</buildtool_depend>
-
-  <depend>builtin_interfaces</depend>
-  <depend>geometry_msgs</depend>
-  <depend>moveit_msgs</depend>
-  <depend>rclpy</depend>
-  <depend>sensor_msgs</depend>
-  <depend>shape_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>tf2_ros</depend>
-  <depend>trajectory_msgs</depend>
-  <depend>visualization_msgs</depend>
-
+  <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
-  <exec_depend>panda</exec_depend>
-  <exec_depend>python3-numpy</exec_depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <exec_depend>robotic_arm_motion</exec_depend>
 
   <export>
-    <build_type>ament_python</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

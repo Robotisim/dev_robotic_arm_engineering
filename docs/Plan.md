@@ -14,6 +14,29 @@
 ## Teaching Approach
 \# Toy arm (basic URDF) first, then Panda side-by-side for the same concept.
 
+## Module-To-Package Mapping
+
+```text
+Module 1: robotic_arm_description, robotic_arm_bringup, robotic_arm_sim
+Module 2: robotic_arm_control, robotic_arm_hardware
+Module 3: robotic_arm_motion
+Module 4: robotic_arm_moveit_config, robotic_arm_bringup
+Module 5: robotic_arm_manipulation
+Module 6: robotic_arm_vision, robotic_arm_manipulation
+Module 7: robotic_arm_evaluation, robotic_arm_manipulation
+Module 8: robotic_arm_manipulation
+```
+
+Module 1 naming for teaching:
+
+```text
+Simple/stick arm model -> robotic_arm_description
+Robot launch commands  -> robotic_arm_bringup
+Simulation worlds      -> robotic_arm_sim
+Controller configs     -> robotic_arm_control
+Hardware skeleton      -> robotic_arm_hardware
+```
+
 ## Module 1 — ROS2 Setup + Arm Modeling
 \# __Lecture 0)__ ROS2 + Arm Bringup (Simulation First) — Create a ROS2 workspace, bring up the arm in RViz/Gazebo with a clean launch pipeline.
 \# __Lecture 1)__ URDF/Xacro Modeling of Your Arm — Build the arm model (links/joints, limits, inertias) and validate it in RViz with TF.

@@ -1,63 +1,72 @@
 # Robotic Arm Engineering Workspace
 
-### Introduction
-ROS 2 Jazzy workspace for simulation and control demos with:
-- `arm_sim_bringup`: custom 4DOF stick arm + Panda wrapper launch
-- `panda`: Panda simulation/control package (Gazebo + ros2_control + MoveIt)
-- `motion`: numbered Panda trajectory demos and MoveIt pose-goal node
+ROS 2 Jazzy learning workspace for robotic arm simulation, control, motion,
+perception, manipulation, evaluation, and VLA-style task routing.
 
-## Prerequisites
+## Package Layout
 
-- Ubuntu 24.04 LTS
-- ROS 2 Jazzy
+- `robotic_arm_description`: stick-arm and Panda URDF/Xacro plus robot meshes
+- `robotic_arm_sim`: Gazebo worlds, object models, tables, camera scenes
+- `robotic_arm_control`: controller YAML and controller demo nodes
+- `robotic_arm_hardware`: real-hardware skeleton package for later modules
+- `robotic_arm_bringup`: top-level launch files students run
+- `robotic_arm_moveit_config`: Panda MoveIt config
+- `robotic_arm_motion`: numbered IK and trajectory demos
+- `robotic_arm_vision`: RGB-D segmentation, calibration checks, point-cloud snapshots
+- `robotic_arm_manipulation`: pick/place executors plus VLM pose pipeline scripts
+- `robotic_arm_evaluation`: logging, trial metadata, metrics skeleton
 
-## Package Docs
-
-- [arm_sim_bringup README](src/arm_sim_bringup/README.md): stick-arm and Panda bringup launch guidance
-- [panda README](src/panda/README.md): Panda worlds, controllers, cameras, MoveIt, and cube-count pick-and-place launch flow
-- [motion README](src/motion/README.md): motion demos, launch arguments, and goal-sending node usage
-
-## Dependencies (rosdep)
-
-Dependencies are declared in package manifests (`package.xml`) and should be installed with `rosdep`:
-
-```bash
-source /opt/ros/jazzy/setup.bash
-cd /home/luqman/repos/dev_robotic_arm_engineering
-rosdep update
-rosdep install --from-paths src --ignore-src --rosdistro jazzy -r -y
-```
+Old package names (`arm_sim_bringup`, `panda`, `motion`, `cube_segmentation`,
+`pick_place`, and `util`) are deprecated wrappers kept for temporary compatibility.
 
 ## Build
 
 ```bash
 source /opt/ros/jazzy/setup.bash
 cd /home/luqman/repos/dev_robotic_arm_engineering
+rosdep update
+rosdep install --from-paths src --ignore-src --rosdistro jazzy -r -y
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-## Launch Guides
-
-### Stick Arm Bringup
-Use the package guide: [arm_sim_bringup README](src/arm_sim_bringup/README.md)
-
-### Panda Simulation and MoveIt Environments
-Use the package guide: [panda README](src/panda/README.md)
-
-### Motion Demos and Pose Goals using IK
-Use the package guide: [motion README](src/motion/README.md)
-
-Quick command (run after launching your predefined Panda environment):
+## Teaching Commands
 
 ```bash
-ros2 launch motion demo_07_moveit_arm_hand_pose_goal.launch.py \
-  target_x:=0.06 target_y:=0.50 target_z:=0.30 \
-  target_qx:=1.0 target_qy:=0.0 target_qz:=0.0 target_qw:=0.0 \
-  gripper_target:=0.020
+ros2 launch robotic_arm_bringup view_robot.launch.py robot:=stick_arm
+ros2 launch robotic_arm_bringup view_robot.launch.py robot:=panda
+
+ros2 launch robotic_arm_bringup sim_robot.launch.py robot:=stick_arm
+ros2 launch robotic_arm_bringup sim_robot.launch.py robot:=panda
+
+ros2 launch robotic_arm_bringup moveit_robot.launch.py robot:=panda
+ros2 launch robotic_arm_bringup pick_place_world.launch.py world:=cubes
+ros2 launch robotic_arm_bringup multi_object_world.launch.py
+ros2 launch robotic_arm_bringup vla_world.launch.py
+
+ros2 launch robotic_arm_vision segmentation.launch.py
+ros2 launch robotic_arm_manipulation pick_place_multi_object.launch.py
 ```
 
-## Troubleshooting
+Motion demos:
 
-- Controller activation, camera topics, and cleanup are documented in [panda README](src/panda/README.md).
-- If Conda Python interferes with ROS builds, rebuild with system Python (`/usr/bin/python3`).
+```bash
+ros2 run robotic_arm_motion motion_01_point_to_point
+ros2 run robotic_arm_motion motion_02_straight_line
+ros2 run robotic_arm_motion motion_03_circle_bump
+ros2 run robotic_arm_motion motion_04_rectangle_shape
+ros2 run robotic_arm_motion motion_05_workspace_reject
+```
+
+## Module Map
+
+- Module 1: `robotic_arm_description`, `robotic_arm_bringup`, `robotic_arm_sim`
+- Module 2: `robotic_arm_control`, `robotic_arm_hardware`
+- Module 3: `robotic_arm_motion`
+- Module 4: `robotic_arm_moveit_config`, `robotic_arm_bringup`
+- Module 5: `robotic_arm_manipulation`
+- Module 6: `robotic_arm_vision`, `robotic_arm_manipulation`
+- Module 7: `robotic_arm_evaluation`, `robotic_arm_manipulation`
+- Module 8: `robotic_arm_manipulation`
+
+See `docs/Plan.md` and the module notes in `docs/` for the teaching flow.

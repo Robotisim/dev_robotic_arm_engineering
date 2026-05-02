@@ -1,44 +1,16 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>panda</name>
-  <version>2.0.0</version>
-  <description>Unified Panda ROS 2 package containing robot description, Gazebo assets, and ros2_control launch/config.</description>
-  <maintainer email="haroon300@hotmail.com">haroon</maintainer>
-  <maintainer email="orsula.andrej@gmail.com">Andrej Orsula</maintainer>
-  <license>BSD</license>
+  <version>0.1.0</version>
+  <description>Deprecated compatibility wrappers for Panda launch and demo commands.</description>
+  <maintainer email="maintainer@example.com">Robotic Arm Maintainer</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-
-  <depend>ament_index_python</depend>
-  <depend>controller_manager</depend>
-  <depend>control_msgs</depend>
-  <depend>joint_state_publisher_gui</depend>
-  <depend>launch</depend>
-  <depend>launch_ros</depend>
-  <depend>rclcpp</depend>
-  <depend>rclcpp_action</depend>
-  <depend>robot_state_publisher</depend>
-  <depend>ros2_control</depend>
-  <depend>ros2_controllers</depend>
-  <depend>gz_ros2_control</depend>
-  <depend>ros_gz_bridge</depend>
-  <depend>ros_gz_sim</depend>
-  <depend>rosgraph_msgs</depend>
-  <depend>rviz2</depend>
-  <depend>sensor_msgs</depend>
-  <depend>trajectory_msgs</depend>
-  <depend>urdf</depend>
-  <depend>xacro</depend>
-  <exec_depend>moveit_configs_utils</exec_depend>
-  <exec_depend>moveit</exec_depend>
-  <exec_depend>moveit_ros_move_group</exec_depend>
-  <exec_depend>moveit_resources_panda_description</exec_depend>
-  <exec_depend>moveit_simple_controller_manager</exec_depend>
-  <exec_depend>moveit_resources_panda_moveit_config</exec_depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>robotic_arm_bringup</exec_depend>
+  <exec_depend>robotic_arm_control</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

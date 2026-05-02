@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec ros2 run robotic_arm_vision pcd_snapshot "$@"

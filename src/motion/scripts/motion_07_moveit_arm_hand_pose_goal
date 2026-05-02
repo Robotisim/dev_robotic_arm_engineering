@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec ros2 run robotic_arm_motion motion_07_moveit_arm_hand_pose_goal "$@"

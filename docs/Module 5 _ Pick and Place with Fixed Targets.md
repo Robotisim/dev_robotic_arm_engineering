@@ -24,7 +24,7 @@
   - Panda: run the full pick/place pipeline with MoveIt execution and collision checking.
 
 - __Deliverables (Must Produce):__
-  - A `pick_place` package/script that runs:
+  - A `robotic_arm_manipulation` package/script that runs:
     - approach → grasp/attach → lift → place → retreat
   - A set of fixed targets stored in YAML (object + place + pre-grasp)
   - Demo video showing 3 consecutive successful cycles (sim; real if available)

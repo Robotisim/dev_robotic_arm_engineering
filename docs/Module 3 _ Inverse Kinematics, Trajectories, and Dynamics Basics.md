@@ -95,7 +95,7 @@
 ---
 
 
-## 4. Live Lecture Demos (`motion` Package on Panda)
+## 4. Live Lecture Demos (`robotic_arm_motion` Package on Panda)
 
 ### Why These Demos Matter for Module 3
 
@@ -111,14 +111,14 @@ Use these commands at the start of class.
 ```bash
 cd /home/luqman/repos/dev_robotic_arm_engineering
 source /opt/ros/jazzy/setup.bash
-colcon build --symlink-install --packages-select arm_sim_bringup motion
+colcon build --symlink-install --packages-select robotic_arm_bringup robotic_arm_motion
 source install/setup.bash
 ```
 
 Terminal 1 (simulation + RViz):
 
 ```bash
-ros2 launch arm_sim_bringup panda_gz_control.launch.py
+ros2 launch robotic_arm_bringup sim_robot.launch.py robot:=panda
 ```
 
 Terminal 2 (status stream for teaching):
@@ -130,7 +130,7 @@ ros2 topic echo /motion/status
 ### Demo 1: Point-to-Point (`01`)
 
 ```bash
-ros2 run motion motion_01_point_to_point --ros-args -p marker_preview_sec:=2.0
+ros2 run robotic_arm_motion motion_01_point_to_point --ros-args -p marker_preview_sec:=2.0
 ```
 
 - __Teaching paragraph:__ Start with the simplest case: two Cartesian goals. Explain that IK is solving two target points only, so students can clearly see “Cartesian goal -> joint solution -> motion.” Highlight that even for this simple case, joint limits still apply.
@@ -138,7 +138,7 @@ ros2 run motion motion_01_point_to_point --ros-args -p marker_preview_sec:=2.0
 ### Demo 2: Straight Line with Many Points (`02`)
 
 ```bash
-ros2 run motion motion_02_straight_line --ros-args -p marker_preview_sec:=2.0
+ros2 run robotic_arm_motion motion_02_straight_line --ros-args -p marker_preview_sec:=2.0
 ```
 
 - __Teaching paragraph:__ Use this to teach path discretization. The straight line is sampled into many waypoints, each waypoint solved by IK, then stitched into one timed joint trajectory. Emphasize why marker-first preview is useful: students visually confirm line quality before execution.
@@ -146,7 +146,7 @@ ros2 run motion motion_02_straight_line --ros-args -p marker_preview_sec:=2.0
 ### Demo 3: Circle + Bump Path (`03`)
 
 ```bash
-ros2 run motion motion_03_circle_bump --ros-args -p marker_preview_sec:=2.0
+ros2 run robotic_arm_motion motion_03_circle_bump --ros-args -p marker_preview_sec:=2.0
 ```
 
 - __Teaching paragraph:__ Teach non-trivial geometric trajectories. The XY path is circular while Z adds a bump profile, proving trajectory generation can combine dimensions. Connect this to manufacturing/inspection motions where tool height varies along a contour.
@@ -154,7 +154,7 @@ ros2 run motion motion_03_circle_bump --ros-args -p marker_preview_sec:=2.0
 ### Demo 4: Full Rectangle Shape (`04`)
 
 ```bash
-ros2 run motion motion_04_rectangle_shape --ros-args -p marker_preview_sec:=2.0
+ros2 run robotic_arm_motion motion_04_rectangle_shape --ros-args -p marker_preview_sec:=2.0
 ```
 
 - __Teaching paragraph:__ Teach piecewise path composition. A rectangle is four line segments joined into one closed loop. This demo is ideal for explaining corner transitions, waypoint density, and how shape fidelity depends on sample count and timing.
@@ -162,7 +162,7 @@ ros2 run motion motion_04_rectangle_shape --ros-args -p marker_preview_sec:=2.0
 ### Demo 5: Workspace Rejection (`05`)
 
 ```bash
-ros2 run motion motion_05_workspace_reject --ros-args -p marker_preview_sec:=2.0
+ros2 run robotic_arm_motion motion_05_workspace_reject --ros-args -p marker_preview_sec:=2.0
 ```
 
 - __Teaching paragraph:__ Teach safety and validation. This path intentionally goes out of task-space bounds; markers appear, but command is rejected. Explain this as a required gate in any robot stack: validate geometry and workspace feasibility before actuator commands.
@@ -170,11 +170,11 @@ ros2 run motion motion_05_workspace_reject --ros-args -p marker_preview_sec:=2.0
 ### Run Other Demos the Same Way
 
 ```bash
-ros2 run motion motion_01_point_to_point --ros-args -p marker_preview_sec:=3.0
-ros2 run motion motion_02_straight_line --ros-args -p marker_preview_sec:=3.0
-ros2 run motion motion_03_circle_bump --ros-args -p marker_preview_sec:=3.0
-ros2 run motion motion_04_rectangle_shape --ros-args -p marker_preview_sec:=3.0
-ros2 run motion motion_05_workspace_reject --ros-args -p marker_preview_sec:=3.0
+ros2 run robotic_arm_motion motion_01_point_to_point --ros-args -p marker_preview_sec:=3.0
+ros2 run robotic_arm_motion motion_02_straight_line --ros-args -p marker_preview_sec:=3.0
+ros2 run robotic_arm_motion motion_03_circle_bump --ros-args -p marker_preview_sec:=3.0
+ros2 run robotic_arm_motion motion_04_rectangle_shape --ros-args -p marker_preview_sec:=3.0
+ros2 run robotic_arm_motion motion_05_workspace_reject --ros-args -p marker_preview_sec:=3.0
 ```
 
 ### Suggested In-Class Flow (45–60 min)
