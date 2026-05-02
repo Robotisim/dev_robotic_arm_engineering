@@ -1,7 +1,7 @@
 # Robotic Arm Engineering Workspace
 
 ROS 2 Jazzy learning workspace for robotic arm simulation, control, motion,
-perception, manipulation, evaluation, and VLA-style task routing.
+perception, manipulation, multi-robot coordination, and VLA-style task routing.
 
 ## Package Layout
 
@@ -14,7 +14,6 @@ perception, manipulation, evaluation, and VLA-style task routing.
 - `robotic_arm_motion`: numbered IK and trajectory demos
 - `robotic_arm_vision`: RGB-D segmentation, calibration checks, point-cloud snapshots
 - `robotic_arm_manipulation`: pick/place executors plus VLM pose pipeline scripts
-- `robotic_arm_evaluation`: logging, trial metadata, metrics skeleton
 
 Old package names (`arm_sim_bringup`, `panda`, `motion`, `cube_segmentation`,
 `pick_place`, and `util`) are deprecated wrappers kept for temporary compatibility.
@@ -66,7 +65,7 @@ ros2 run robotic_arm_motion motion_05_workspace_reject
 - Module 4: `robotic_arm_moveit_config`, `robotic_arm_bringup`
 - Module 5: `robotic_arm_manipulation`
 - Module 6: `robotic_arm_vision`, `robotic_arm_manipulation`
-- Module 7: `robotic_arm_evaluation`, `robotic_arm_manipulation`
+- Module 7: multi-robot task execution using `robotic_arm_bringup` and `robotic_arm_manipulation`
 - Module 8: `robotic_arm_manipulation`
 
-See `docs/Plan.md` and the module notes in `docs/` for the teaching flow.
+See the module notes in `docs/` for the teaching flow.

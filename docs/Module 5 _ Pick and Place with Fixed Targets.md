@@ -1,164 +1,98 @@
-# Module 5: Pick and Place with Fixed Targets
 
 ---
 
-## 1. Purpose & Scope
+## Module 5 in scope
 
-- __Overall Goal:__
-  1. In __simulation/emulation__: execute a repeatable pick-and-place routine using pre-defined target poses and approach/retreat motions (toy arm for explanation, Panda for the full workflow).
-  2. On __real system/hardware__: execute the same routine with conservative speeds and simple success checks.
+Module 5 should cover:
 
-- __Prerequisites:__
-  - Module 4 MoveIt 2 pipeline working
-  - A gripper (real or simulated) or a placeholder “attach/detach” interface
+* What pick and place means in robotics
+* Task decomposition
+* Fixed target poses
+* Object frame
+* Place frame
+* Tool frame
+* Pre-grasp frame
+* Grasp frame
+* Approach vector
+* Retreat vector
+* Lift clearance
+* Table clearance
+* Orientation constraints
+* MoveIt planning for each phase
+* Gripper open/close
+* Simulated attach/detach behavior
+* Parameter tuning
+* YAML-based target storage
+* Cycle testing
+* Failure logging
+* Debugging grasp misses and slips
 
-- __Notes (Primary):__
-  - `Notes/part_1_kinematics.pdf` p.2-9 (poses, frames, homogeneous transforms)
-  - `Notes/part_1_kinematics.pdf` p.17-22 (IK)
-  - `Notes/part_1_kinematics.pdf` p.39-46 (trajectory planning)
-  - `Notes/part_3_motion.pdf` p.12-18 (control/tuning intuition for reliable execution)
-  - `docs/Notes Index.md`
+## Module 5 out of scope
 
-- __Teaching Setup (Toy vs Panda):__
-  - Toy arm: teach frames (`base`, `tool`, `pregrasp`, `grasp`) and target definitions.
-  - Panda: run the full pick/place pipeline with MoveIt execution and collision checking.
+Do not make these the focus of Module 5:
 
-- __Deliverables (Must Produce):__
-  - A `robotic_arm_manipulation` package/script that runs:
-    - approach → grasp/attach → lift → place → retreat
-  - A set of fixed targets stored in YAML (object + place + pre-grasp)
-  - Demo video showing 3 consecutive successful cycles (sim; real if available)
+* RGB-D camera perception
+* color segmentation
+* runtime object detection
+* camera calibration
+* point clouds
+* Octomap mapping
+* advanced grasp synthesis
+* deep learning-based grasping
+* visual servoing
 
-- __Key Steps (Execution Path):__
-  - Define object + place targets in a fixed frame (`base_link` or `world`)
-  - Add approach/retreat waypoints and constraints (orientation, clearance)
-  - Integrate gripper open/close (or attach/detach in sim)
-  - Add basic checks: reachability, plan success, post-place retreat
+These belong in Module 6 or later.
 
-- __Sim vs Real (Consistency Checklist):__
-  - __What stays the same:__ targets/frames, approach/retreat logic, planning requests, gripper command interface.
-  - __What changes in real:__ grasp tolerance, contact uncertainty, compliance, object slip, safety speeds.
-  - __Minimum validation:__ 3 cycles with zero collisions and consistent final placement pose.
-  - __Failure modes + checks (at least 3):__
-    - Grasp misses object → adjust pre-grasp offsets; verify frame and object pose.
-    - Collisions near table → increase clearance; tune collision padding.
-    - Object drops on lift → slow acceleration; verify gripper force/close timing.
+## Module 5 required deliverables
 
----
+By the end of Module 5, students should have:
 
-## 2. Curriculum Focus
+* A `robotic_arm_manipulation` pick/place routine
+* Fixed object/place/pre-grasp targets
+* A clean fixed target YAML file
+* A working Panda pick/place world
+* A single-object pick/place executor
+* Gripper open/close or attach/detach behavior
+* A 3-cycle successful demo
+* A 10-cycle reliability report
+* A CSV with timing and success/failure
+* A short debugging writeup
 
-### Part A: Simulation / Emulation Track
+Your plan asks for a `robotic_arm_manipulation` package/script that runs approach → grasp/attach → lift → place → retreat, plus fixed targets in YAML and a demo showing 3 consecutive successful cycles.
 
-1. __Concepts__
-   - Task decomposition: approach/grasp/lift/place/retreat
-   - Fixed frames + stored targets for repeatability
-   - Toy vs Panda: grasp frames stay the same; execution stack complexity changes
-2. __Implementation__
-   - Implement a deterministic pick/place pipeline using MoveIt plans
-   - Store targets in YAML and load at runtime
-3. __Validation__
-   - Cycle test: repeat N times and record success/failure + timings
+## Module 5 cleanup before recording
 
-### Part B: Real System / Hardware Track (or Optional)
+Before recording Module 5, fix or clearly mark these issues:
 
-1. __Bringup__
-   - Gripper calibration (open/close positions or force)
-2. __Runtime Testing__
-   - Bench test with conservative speeds; add “pause/continue” safety gating
-3. __Debugging__
-   - Diagnose object pose offsets, gripper timing, and contact variability
+* The docs ask for fixed targets in YAML, but current target values are inside `params.yaml`; create a cleaner `fixed_targets.yaml`.
+* Add benchmark/log CSV for 3 or 10 repeated cycles.
+* Formalize simulated attach/detach object handling.
+* Resolve `static_env_sdf_path` from the `robotic_arm_sim` package share instead of a hardcoded source-style path.
 
----
+These cleanup items are already noted in your teaching map.
 
-## 3. Concrete–Pictorial–Abstract (CPA) Breakdown
+## Module 5 success criteria
 
-### Concrete (Hands-On / Doing)
-- Run pick/place script with fixed targets
-- Record repeated cycles and capture failure reasons
+Students should be able to:
 
-### Pictorial (Visual / Intuition)
-- RViz markers for target poses + approach waypoints
-- Success timeline: plan → execute → gripper → attach/detach
+* Define fixed target poses in a known frame.
+* Explain pre-grasp, grasp, lift, place, and retreat.
+* Launch the pick/place world.
+* Run a pick/place routine.
+* Tune approach height and clearances.
+* Explain why direct-to-grasp motion is risky.
+* Debug wrong target frames.
+* Debug missed grasps.
+* Run repeated cycles and calculate success rate.
 
-### Abstract (Math / Architecture / Theory)
-- Motion constraints (orientation constraints, path constraints)
-- Why structured approach/retreat reduces failure probability
+## Module 5 final scope decision
 
----
+Keep Module 5 focused on:
 
-## Updated Video List
+```text
+fixed targets → structured manipulation sequence → MoveIt plans → gripper timing → cycle validation
+```
 
-> Naming convention:
-> `M5_V<NN>_<Title>_[F|S|A]`
-
-#### Part A: Simulation / Emulation
-1. __M5_V01_Outcome_First_Manipulation_[F]__
-   - __Content__: The pick/place pipeline, target definitions, and what “success” means.
-   - __Notes__: `Notes/part_1_kinematics.pdf` p.2-9 (pose/frames) + p.17-22 (IK)
-
-2. __M5_V02_Grasp_Frames_and_Target_Poses_Theory_[F]__
-   - __Content__: How to define `pregrasp`, `grasp`, and `place` frames, how those relate to the tool frame, and why frame mistakes cause “perfect plans that miss”.
-   - __Notes__: `Notes/part_1_kinematics.pdf` p.2-9 (poses/frames) + p.17-22 (IK framing)
-
-3. __M5_V03_Why_Approach_and_Retreat_Work_[A]__
-   - __Content__:
-     - __Context__: Most failures happen near contact; structured motion reduces uncertainty.
-     - __Analogy Start__: “Like parking a car: you line up, move slowly into the spot, then back out cleanly.”
-     - __Explanation__: Pre-grasp alignment, straight approach corridor, lift clearance, and retreat.
-     - __Animation Style__: 2D top/side views showing safe corridor volumes and waypoints.
-     - __Process__:
-       1. Show direct-to-grasp path colliding/missing.
-       2. Add pre-grasp waypoint → alignment improves.
-       3. Add straight approach corridor → contact reliability improves.
-       4. Add lift/retreat clearances → fewer collisions.
-   - __Notes__: `Notes/part_1_kinematics.pdf` p.39-46 (trajectory planning mindset; approach/retreat pattern not explicit in `Notes/`)
-
-4. __M5_V04_Implementing_PickPlace_with_MoveIt_[S]__
-   - __Content__: Load targets from YAML, plan approach/grasp/lift/place/retreat, execute, and log outcomes (toy arm for visualization; Panda for the real demo).
-   - __Notes__: `Notes/part_1_kinematics.pdf` p.17-22 (IK) + p.39-46 (trajectory planning) as background
-
-5. __M5_V05_Validation_Cycle_Test_and_Failure_Logging_[S]__
-   - __Content__: Run N cycles, log timings/failures, compute success rate.
-   - __Notes__: `Notes/part_3_motion.pdf` p.12-18 (interpreting oscillation/overshoot symptoms) as background
-
-#### Part B: Real System / Hardware
-6. __M5_V06_Gripper_Bringup_and_Timing_[S]__
-   - __Content__: Real gripper interface, open/close calibration, and safe testing.
-   - __Notes__: (Gripper hardware bringup; not covered in `Notes/`)
-
-7. __M5_V07_Debugging_Grasp_Offsets_and_Slip_[S]__
-   - __Content__: Diagnose missed grasps and object slip; tune offsets, speeds, and gripper parameters.
-   - __Notes__: `Notes/part_3_motion.pdf` p.12-18 (tuning symptoms) + `Notes/part_3_motion.pdf` p.17-18 (gravity compensation concept) as background
+Do not introduce perception yet. Module 6 will replace fixed targets with detected targets.
 
 ---
-
-## Assignments & Practice Tasks
-
-1. __M5_A01_Fixed_Targets_YAML__
-   - __Goal__: define object + place targets in YAML and visualize them in RViz.
-   - __Submission__: YAML + RViz screenshot.
-   - __Pass Criteria__: targets load correctly and are in the expected frame.
-
-2. __M5_A02_PickPlace_Demo__
-   - __Goal__: complete one full pick and one full place.
-   - __Submission__: 60–90s demo video + code link.
-   - __Pass Criteria__: no collisions; object ends at the place target.
-
-3. __M5_A03_Cycle_Test_Report__
-   - __Goal__: run 10 cycles (sim) and summarize success rate + mean cycle time.
-   - __Submission__: CSV + 5–10 line report.
-   - __Pass Criteria__: includes top 3 failure reasons (if any) and one improvement attempt.
-
-4. __M5_A04_Debugging_Drill_Wrong_Target_Frame__
-   - __Goal__: reproduce a bug where targets are in the wrong frame and fix it.
-   - __Submission__: writeup + screenshot before/after.
-   - __Pass Criteria__: corrected frame usage; routine works again.
-
----
-
-## Final Summary
-
-- You can perform deterministic pick/place with fixed targets and structured approach/retreat.
-- You can measure and improve reliability via cycle tests and failure logs.
-- Next module adds perception to replace fixed targets with runtime-detected poses.
