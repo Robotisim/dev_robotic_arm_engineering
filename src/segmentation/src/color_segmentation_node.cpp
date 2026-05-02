@@ -1,14 +1,15 @@
+#include <algorithm>
 #include <cmath>
 #include <cv_bridge/cv_bridge.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include <geometry_msgs/msg/pose_array.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <image_geometry/pinhole_camera_model.hpp>
-#include <image_transport/image_transport.hpp>>
 #include <iomanip>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
@@ -53,6 +54,9 @@ public:
 		this->declare_parameter("morph_kernel_size", 5);
 		this->declare_parameter("visualization_enabled", true);
 		this->declare_parameter("debug_images", false);
+		this->declare_parameter("rgb_topic", "/camera/image_raw");
+		this->declare_parameter("depth_topic", "/camera/depth/image_raw");
+		this->declare_parameter("camera_info_topic", "/camera/depth/camera_info");
 
 		// Phase 2 parameters
 		this->declare_parameter("depth_processing_enabled", true);
@@ -75,6 +79,9 @@ public:
 		morph_kernel_size_ = this->get_parameter("morph_kernel_size").as_int();
 		visualization_enabled_ = this->get_parameter("visualization_enabled").as_bool();
 		debug_images_ = this->get_parameter("debug_images").as_bool();
+		rgb_topic_ = this->get_parameter("rgb_topic").as_string();
+		depth_topic_ = this->get_parameter("depth_topic").as_string();
+		camera_info_topic_ = this->get_parameter("camera_info_topic").as_string();
 
 		// Phase 2 parameters
 		depth_processing_enabled_ = this->get_parameter("depth_processing_enabled").as_bool();
@@ -94,19 +101,15 @@ public:
 
 		// Create subscribers
 		image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
-		    "/wrist_eye/image_raw", 10, std::bind(&ColorSegmentationNode::imageCallback, this, std::placeholders::_1));
+		    rgb_topic_, 10, std::bind(&ColorSegmentationNode::imageCallback, this, std::placeholders::_1));
 
 		// Phase 2: Subscribe to depth and camera_info
 		if (depth_processing_enabled_) {
 			depth_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
-			    "/wrist_eye/depth/image_raw",
-			    10,
-			    std::bind(&ColorSegmentationNode::depthCallback, this, std::placeholders::_1));
+			    depth_topic_, 10, std::bind(&ColorSegmentationNode::depthCallback, this, std::placeholders::_1));
 
 			camera_info_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
-			    "/wrist_eye/depth/camera_info",
-			    10,
-			    std::bind(&ColorSegmentationNode::cameraInfoCallback, this, std::placeholders::_1));
+			    camera_info_topic_, 10, std::bind(&ColorSegmentationNode::cameraInfoCallback, this, std::placeholders::_1));
 		}
 
 		// Create publishers
@@ -121,24 +124,37 @@ public:
 
 		// Phase 3: Publish pose array and initialize TF
 		if (transform_enabled_) {
-			pose_array_pub_ = this->create_publisher<geometry_msgs::msg::PoseArray>("~/object_poses_base", 10);
+			pose_array_pub_ = this->create_publisher<geometry_msgs::msg::PoseArray>("~/object_poses", 10);
 			tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
 			tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 		}
 
 		RCLCPP_INFO(this->get_logger(), "Color Segmentation Node initialized");
-		RCLCPP_INFO(this->get_logger(), "Subscribing to: /wrist_eye/image_raw");
+		RCLCPP_INFO(this->get_logger(), "Subscribing to RGB topic: %s", rgb_topic_.c_str());
 		if (depth_processing_enabled_) {
 			RCLCPP_INFO(this->get_logger(), "Depth processing enabled");
-			RCLCPP_INFO(this->get_logger(), "Subscribing to: /wrist_eye/depth/image_raw, /wrist_eye/depth/camera_info");
+			RCLCPP_INFO(
+			    this->get_logger(), "Subscribing to depth topics: %s, %s", depth_topic_.c_str(), camera_info_topic_.c_str());
 		}
 		if (transform_enabled_) {
-			RCLCPP_INFO(this->get_logger(), "Transform enabled: camera frame → %s", target_frame_.c_str());
+			RCLCPP_INFO(this->get_logger(),
+			            "Transform enabled: source=%s (use_image_frame=%s) -> target=%s",
+			            source_frame_.c_str(),
+			            use_image_frame_ ? "true" : "false",
+			            target_frame_.c_str());
 		}
-		RCLCPP_INFO(this->get_logger(), "Publishing to: ~/annotated_image, ~/detection_markers, ~/detections");
+		RCLCPP_INFO(this->get_logger(),
+		            "Publishing to: ~/annotated_image, ~/detection_markers, ~/detections, ~/object_poses");
 	}
 
 private:
+	std::string resolveSourceFrame(std_msgs::msg::Header const& header) const {
+		if (use_image_frame_ && !header.frame_id.empty()) {
+			return header.frame_id;
+		}
+		return source_frame_;
+	}
+
 	void initializeColorRanges() {
 		// Red cube - Note: Red wraps around in HSV, so we need two ranges
 		color_ranges_.push_back({
@@ -527,12 +543,13 @@ private:
 
 	void publishMarkers(std::vector<DetectedObject> const& detections, std_msgs::msg::Header const& header) {
 		visualization_msgs::msg::MarkerArray marker_array;
+		auto const source_frame = resolveSourceFrame(header);
 
 		int id = 0;
 		for (auto const& detection : detections) {
 			visualization_msgs::msg::Marker marker;
 			marker.header = header;
-			marker.header.frame_id = source_frame_; // Use configured camera frame
+			marker.header.frame_id = source_frame;
 			marker.ns = "detections";
 			marker.id = id++;
 			marker.type = visualization_msgs::msg::Marker::SPHERE;
@@ -665,7 +682,7 @@ private:
 		// Create point cloud message
 		sensor_msgs::msg::PointCloud2 cloud_msg;
 		cloud_msg.header = header;
-		cloud_msg.header.frame_id = source_frame_; // Use configured camera frame
+		cloud_msg.header.frame_id = resolveSourceFrame(header);
 
 		// Define fields: x, y, z, rgb
 		cloud_msg.height = 1;
@@ -755,12 +772,7 @@ private:
 		}
 
 		// Determine source frame: use image header or configured parameter
-		std::string source_frame;
-		if (use_image_frame_ && !header.frame_id.empty()) {
-			source_frame = header.frame_id;
-		} else {
-			source_frame = source_frame_; // Use configured camera frame
-		}
+		auto const source_frame = resolveSourceFrame(header);
 
 		RCLCPP_DEBUG(this->get_logger(),
 		             "Transforming %zu detections from %s to %s",
@@ -866,6 +878,9 @@ private:
 	int morph_kernel_size_;
 	bool visualization_enabled_;
 	bool debug_images_;
+	std::string rgb_topic_;
+	std::string depth_topic_;
+	std::string camera_info_topic_;
 
 	// Phase 2 parameters
 	bool depth_processing_enabled_;

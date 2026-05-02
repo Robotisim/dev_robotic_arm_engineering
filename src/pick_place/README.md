@@ -19,3 +19,20 @@ ros2 run pick_place pick_place_executor_node --ros-args --params-file ros2_ws/sr
 
 
 ```
+
+### For multiple objects
+
+```bash
+# env
+ros2 launch panda panda_multi_object_sequence.launch.py
+
+# finding objects and publishing their poses
+ros2 launch cube_segmentation segmentation.launch.py \
+  use_sim_time:=true \
+  publish_header_alias_tf:=true \
+  publish_optical_tf:=true
+
+# pick and place executor
+ros2 launch pick_place pick_place_multi_object.launch.py
+
+```

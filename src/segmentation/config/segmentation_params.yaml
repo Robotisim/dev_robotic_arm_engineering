@@ -17,6 +17,11 @@
     # Show debug windows with masks (set to false in production)
     debug_images: false
 
+    # Camera topics (configurable per setup)
+    rgb_topic: "/wrist_eye/image_raw"
+    depth_topic: "/wrist_eye/depth/image_raw"
+    camera_info_topic: "/wrist_eye/depth/camera_info"
+
     # Phase 2: Depth processing parameters
     # Enable/disable 3D localization using depth camera
     depth_processing_enabled: true
@@ -37,15 +42,13 @@
     # Options: "world", "panda_link0" (both are equivalent for this robot)
     target_frame: "panda_link0"
 
-    # Source frame (camera optical frame)
-    # The camera publishes images with frame_id in the header
-    # Must match the actual frame name in TF tree
-    # Use optical frame so depth Z-axis points in correct direction
-    source_frame: "panda_wrist_eye_optical_frame"
+    # Source frame used for deprojection and marker/point cloud frame IDs.
+    # This should be an optical frame. If your camera only has a non-optical
+    # frame, use launch to publish a static transform to this optical frame.
+    source_frame: "camera_optical_frame"
 
-    # Use camera frame from image header instead of source_frame parameter
-    # If true: uses header.frame_id from camera images
-    # If false: always uses source_frame parameter above (RECOMMENDED)
+    # Keep false when image headers use non-optical camera frames.
+    # Set true only if header.frame_id is already an optical frame.
     use_image_frame: false
 
     # TF lookup timeout in seconds
