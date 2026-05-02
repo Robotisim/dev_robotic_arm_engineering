@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  Custom Panda SRDF for this workspace:
+  - keep panda_arm at panda_link8
+  - expose panda_arm_hand as a TCP-based chain to panda_hand_tcp
+    so RViz pose goals are anchored at the gripper tool center.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+  <xacro:include filename="$(find moveit_resources_panda_moveit_config)/config/panda_arm.xacro" />
+  <xacro:include filename="$(find moveit_resources_panda_moveit_config)/config/hand.xacro" />
+
+  <xacro:panda_arm />
+  <xacro:hand />
+
+  <group name="panda_arm_hand">
+    <chain base_link="panda_link0" tip_link="panda_hand_tcp" />
+  </group>
+
+  <group_state name="open" group="hand">
+    <joint name="panda_finger_joint1" value="0.035" />
+    <joint name="panda_finger_joint2" value="0.035" />
+  </group_state>
+  <group_state name="close" group="hand">
+    <joint name="panda_finger_joint1" value="0" />
+    <joint name="panda_finger_joint2" value="0" />
+  </group_state>
+
+  <end_effector name="hand" parent_link="panda_link8" group="hand" parent_group="panda_arm" />
+
+  <disable_collisions link1="panda_hand" link2="panda_link3" reason="Never" />
+  <disable_collisions link1="panda_hand" link2="panda_link4" reason="Never" />
+  <disable_collisions link1="panda_hand" link2="panda_link6" reason="Never" />
+  <disable_collisions link1="panda_hand" link2="panda_link7" reason="Adjacent" />
+  <disable_collisions link1="panda_leftfinger" link2="panda_link3" reason="Never" />
+  <disable_collisions link1="panda_leftfinger" link2="panda_link4" reason="Never" />
+  <disable_collisions link1="panda_leftfinger" link2="panda_link6" reason="Never" />
+  <disable_collisions link1="panda_leftfinger" link2="panda_link7" reason="Never" />
+  <disable_collisions link1="panda_link3" link2="panda_rightfinger" reason="Never" />
+  <disable_collisions link1="panda_link4" link2="panda_rightfinger" reason="Never" />
+  <disable_collisions link1="panda_link6" link2="panda_rightfinger" reason="Never" />
+  <disable_collisions link1="panda_link7" link2="panda_rightfinger" reason="Never" />
+</robot>

@@ -1,0 +1,303 @@
+<?xml version='1.0'?>
+<sdf version='1.9'>
+  <world name='multi_object_sequential_env'>
+    <physics name='1ms' type='ignored'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'>
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
+
+    <scene>
+      <ambient>0.45 0.45 0.45 1</ambient>
+      <background>0.70 0.72 0.74 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <gravity>0 0 -9.8</gravity>
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://table</uri>
+      <pose>0.270759 1.801050 0 0 0 0</pose>
+    </include>
+
+    <!--
+      Layout overview (top-down, robot at origin facing +x):
+
+          y=1.60 ─────────────────────── Left wall ────────────────────────── y=1.60
+                  [OBJ1]  [  gap  ]   [OBJ2]  [  gap  ]   [OBJ3]  [  gap  ]
+                         [barrier_a]         [barrier_b]          [barrier_c]
+          y=2.00 ─────────────────────── Right wall ───────────────────────── y=2.00
+                 x≈0.26   x=0.37    x≈0.44   x=0.52    x≈0.60   x=0.68
+
+      Each blue barrier is two segments with a central gap (~0.14 m) through
+      which the arm can reach the next zone. Corridor is wider (0.40 m) for
+      more arm clearance around the side walls.
+
+      Objects:
+        1. Cube       (green)  – Zone 1, slightly left of centre
+        2. Cylinder   (blue)   – Zone 2, centred between side walls
+        3. Rod/prism  (orange) – Zone 3, centred, close to barrier C
+    -->
+
+    <!-- ── Side walls (wider corridor: y=1.60 / y=2.00) ── -->
+    <model name='corridor_wall_left'>
+      <static>true</static>
+      <pose>0.44 1.60 1.085 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.48 0.03 0.14</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.48 0.03 0.14</size></box>
+          </geometry>
+          <material>
+            <ambient>0.85 0.35 0.20 1</ambient>
+            <diffuse>0.85 0.35 0.20 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='corridor_wall_right'>
+      <static>true</static>
+      <pose>0.44 2.00 1.085 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.48 0.03 0.14</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.48 0.03 0.14</size></box>
+          </geometry>
+          <material>
+            <ambient>0.85 0.35 0.20 1</ambient>
+            <diffuse>0.85 0.35 0.20 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Barrier A (x=0.37): two segments, central gap y=1.73→1.87 ── -->
+    <model name='barrier_a_left'>
+      <static>true</static>
+      <!-- covers y=1.60→1.73, centre=(1.60+1.73)/2=1.665, size_y=0.13 -->
+      <pose>0.37 1.665 1.085 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+          <material>
+            <ambient>0.20 0.40 0.85 1</ambient>
+            <diffuse>0.20 0.40 0.85 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='barrier_a_right'>
+      <static>true</static>
+      <!-- covers y=1.87→2.00, centre=(1.87+2.00)/2=1.935, size_y=0.13 -->
+      <pose>0.37 1.935 1.085 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+          <material>
+            <ambient>0.20 0.40 0.85 1</ambient>
+            <diffuse>0.20 0.40 0.85 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Barrier B (x=0.52): two segments, central gap y=1.73→1.87 ── -->
+    <model name='barrier_b_left'>
+      <static>true</static>
+      <pose>0.52 1.665 1.085 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+          <material>
+            <ambient>0.20 0.40 0.85 1</ambient>
+            <diffuse>0.20 0.40 0.85 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='barrier_b_right'>
+      <static>true</static>
+      <pose>0.52 1.935 1.085 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.03 0.13 0.14</size></box>
+          </geometry>
+          <material>
+            <ambient>0.20 0.40 0.85 1</ambient>
+            <diffuse>0.20 0.40 0.85 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Barrier C (x=0.68): full-width end wall ── -->
+    <model name='barrier_c'>
+      <static>true</static>
+      <pose>0.68 1.800 1.085 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.03 0.40 0.14</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.03 0.40 0.14</size></box>
+          </geometry>
+          <material>
+            <ambient>0.20 0.40 0.85 1</ambient>
+            <diffuse>0.20 0.40 0.85 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Object 1: Cube (green) – Zone 1, slightly left of centre ── -->
+    <model name='target_cube'>
+      <static>false</static>
+      <pose>0.26 1.73 1.040 0 0 0</pose>
+      <link name='link'>
+        <inertial>
+          <mass>0.12</mass>
+          <inertia>
+            <ixx>0.00005</ixx><ixy>0.0</ixy><ixz>0.0</ixz>
+            <iyy>0.00005</iyy><iyz>0.0</iyz>
+            <izz>0.00005</izz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.05 0.05 0.05</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.05 0.05 0.05</size></box>
+          </geometry>
+          <material>
+            <ambient>0.10 0.85 0.25 1</ambient>
+            <diffuse>0.10 0.85 0.25 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Object 2: Cylinder (blue) – Zone 2, centred ── -->
+    <model name='target_cylinder'>
+      <static>false</static>
+      <pose>0.44 1.80 1.040 0 0 0</pose>
+      <link name='link'>
+        <inertial>
+          <mass>0.12</mass>
+          <inertia>
+            <ixx>0.00005</ixx><ixy>0.0</ixy><ixz>0.0</ixz>
+            <iyy>0.00005</iyy><iyz>0.0</iyz>
+            <izz>0.00004</izz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <cylinder><radius>0.025</radius><length>0.05</length></cylinder>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <cylinder><radius>0.025</radius><length>0.05</length></cylinder>
+          </geometry>
+          <material>
+            <ambient>0.20 0.45 0.95 1</ambient>
+            <diffuse>0.20 0.45 0.95 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ── Object 3: Elongated rod (orange) – Zone 3, centred, close to barrier C ── -->
+    <model name='target_rod'>
+      <static>false</static>
+      <pose>0.60 1.80 1.040 0 0 0</pose>
+      <link name='link'>
+        <inertial>
+          <mass>0.12</mass>
+          <inertia>
+            <ixx>0.00003</ixx><ixy>0.0</ixy><ixz>0.0</ixz>
+            <iyy>0.00008</iyy><iyz>0.0</iyz>
+            <izz>0.00008</izz>
+          </inertia>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <box><size>0.08 0.04 0.04</size></box>
+          </geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box><size>0.08 0.04 0.04</size></box>
+          </geometry>
+          <material>
+            <ambient>0.95 0.55 0.10 1</ambient>
+            <diffuse>0.95 0.55 0.10 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>

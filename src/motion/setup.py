@@ -30,6 +30,7 @@ setup(
             'motion_04_rectangle_shape = motion.demo_04_rectangle_shape:main',
             'motion_05_workspace_reject = motion.demo_05_workspace_reject:main',
             'motion_06_moveit_pose_goal = motion.demo_06_moveit_pose_goal:main',
+            'motion_07_moveit_arm_hand_pose_goal = motion.demo_06_moveit_pose_goal:main_arm_hand',
         ],
     },
 )

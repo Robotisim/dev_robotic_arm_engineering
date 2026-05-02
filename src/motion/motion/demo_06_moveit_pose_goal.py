@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import math
+import time
 
 import rclpy
+from builtin_interfaces.msg import Duration as DurationMsg
 from geometry_msgs.msg import Pose
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import (
     Constraints,
+    JointConstraint,
     MoveItErrorCodes,
     OrientationConstraint,
     PositionConstraint,
@@ -17,11 +20,12 @@ from rclpy.node import Node
 from rclpy.time import Time
 from shape_msgs.msg import SolidPrimitive
 from tf2_ros import Buffer, TransformException, TransformListener
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 
 class Demo06MoveItPoseGoal(Node):
-    def __init__(self) -> None:
-        super().__init__('motion_06_moveit_pose_goal')
+    def __init__(self, node_name: str = 'motion_06_moveit_pose_goal') -> None:
+        super().__init__(node_name)
 
         self.declare_parameter('move_action_name', '/move_action')
         self.declare_parameter('planning_group', 'panda_arm')
@@ -47,11 +51,29 @@ class Demo06MoveItPoseGoal(Node):
         self.declare_parameter('start_delay_sec', 2.0)
         self.declare_parameter('log_current_pose_before_goal', True)
         self.declare_parameter('current_pose_wait_timeout_sec', 2.0)
+        self.declare_parameter('use_finger_joint_constraint', False)
+        self.declare_parameter('finger_joint_name', 'panda_finger_joint1')
+        self.declare_parameter('finger_joint_target', 0.035)
+        self.declare_parameter('finger_joint_tolerance_above', 0.002)
+        self.declare_parameter('finger_joint_tolerance_below', 0.002)
+        self.declare_parameter('finger_joint_weight', 1.0)
+        self.declare_parameter('gripper_command', 'none')  # one of: none, open, close
+        self.declare_parameter(
+            'gripper_target', -1.0
+        )  # numeric override; if >= 0, used directly and gripper_command is ignored
+        self.declare_parameter('gripper_joint_name', 'panda_finger_joint1')
+        self.declare_parameter('gripper_open_position', 0.035)
+        self.declare_parameter('gripper_closed_position', 0.0)
+        self.declare_parameter('gripper_motion_time_sec', 1.0)
+        self.declare_parameter('gripper_wait_after_command_sec', 0.0)
 
         action_name = str(self.get_parameter('move_action_name').value)
         self._client = ActionClient(self, MoveGroup, action_name)
         self._tf_buffer = Buffer()
         self._tf_listener = TransformListener(self._tf_buffer, self, spin_thread=False)
+        self._gripper_pub = self.create_publisher(
+            JointTrajectory, '/gripper_trajectory_controller/joint_trajectory', 10
+        )
         self._finished = False
         self._send_future = None
         self._result_future = None
@@ -84,20 +106,89 @@ class Demo06MoveItPoseGoal(Node):
             self._finish()
             return
 
+        self._maybe_send_gripper_command()
+
         if self._get_bool_param('log_current_pose_before_goal'):
             self._log_current_pose()
 
         goal = self._build_goal()
-        self.get_logger().info(
-            'Sending pose goal xyz=(%.3f, %.3f, %.3f)'
-            % (
-                float(self.get_parameter('target_x').value),
-                float(self.get_parameter('target_y').value),
-                float(self.get_parameter('target_z').value),
-            )
+        target_link = str(self.get_parameter('target_link').value)
+        planning_group = str(self.get_parameter('planning_group').value)
+        self._log_pose_block(
+            title='GOAL POSE',
+            planning_group=planning_group,
+            planning_frame=str(self.get_parameter('planning_frame').value),
+            target_link=target_link,
+            x=float(self.get_parameter('target_x').value),
+            y=float(self.get_parameter('target_y').value),
+            z=float(self.get_parameter('target_z').value),
+            qx=float(self.get_parameter('target_qx').value),
+            qy=float(self.get_parameter('target_qy').value),
+            qz=float(self.get_parameter('target_qz').value),
+            qw=float(self.get_parameter('target_qw').value),
         )
+        if self._get_bool_param('use_finger_joint_constraint'):
+            self.get_logger().info(
+                'Applying finger joint constraint: %s=%.4f (+%.4f / -%.4f)'
+                % (
+                    str(self.get_parameter('finger_joint_name').value),
+                    float(self.get_parameter('finger_joint_target').value),
+                    float(self.get_parameter('finger_joint_tolerance_above').value),
+                    float(self.get_parameter('finger_joint_tolerance_below').value),
+                )
+            )
         self._send_future = self._client.send_goal_async(goal)
         self._send_future.add_done_callback(self._on_goal_response)
+
+    def _maybe_send_gripper_command(self) -> None:
+        gripper_target = float(self.get_parameter('gripper_target').value)
+        command = str(self.get_parameter('gripper_command').value).strip().lower()
+
+        if gripper_target >= 0.0:
+            target = gripper_target
+            command_label = f'set({target:.4f})'
+        else:
+            if command in {'', 'none'}:
+                return
+
+            if command == 'open':
+                target = float(self.get_parameter('gripper_open_position').value)
+            elif command == 'close':
+                target = float(self.get_parameter('gripper_closed_position').value)
+            else:
+                self.get_logger().warn(
+                    'Unknown gripper_command "%s". Use: none | open | close. Skipping gripper command.'
+                    % command
+                )
+                return
+            command_label = command
+
+        gripper_joint_name = str(self.get_parameter('gripper_joint_name').value)
+        motion_time = max(0.05, float(self.get_parameter('gripper_motion_time_sec').value))
+
+        traj_msg = JointTrajectory()
+        traj_msg.joint_names = [gripper_joint_name]
+
+        point = JointTrajectoryPoint()
+        point.positions = [target]
+        point.time_from_start = DurationMsg(
+            sec=int(motion_time),
+            nanosec=int((motion_time - int(motion_time)) * 1.0e9),
+        )
+        traj_msg.points = [point]
+
+        self._gripper_pub.publish(traj_msg)
+        self.get_logger().info(
+            'Published gripper command: %s -> %s=%.4f in %.2fs'
+            % (command_label, gripper_joint_name, target, motion_time)
+        )
+
+        wait_after = max(0.0, float(self.get_parameter('gripper_wait_after_command_sec').value))
+        if wait_after > 0.0:
+            self.get_logger().info(
+                'Waiting %.2fs after gripper command before sending pose goal.' % wait_after
+            )
+            time.sleep(wait_after)
 
     def _build_goal(self) -> MoveGroup.Goal:
         planning_frame = str(self.get_parameter('planning_frame').value)
@@ -191,6 +282,22 @@ class Demo06MoveItPoseGoal(Node):
         constraints = Constraints()
         constraints.position_constraints.append(position_constraint)
         constraints.orientation_constraints.append(orientation_constraint)
+
+        if self._get_bool_param('use_finger_joint_constraint'):
+            finger_joint_constraint = JointConstraint()
+            finger_joint_constraint.joint_name = str(self.get_parameter('finger_joint_name').value)
+            finger_joint_constraint.position = float(self.get_parameter('finger_joint_target').value)
+            finger_joint_constraint.tolerance_above = max(
+                0.0, float(self.get_parameter('finger_joint_tolerance_above').value)
+            )
+            finger_joint_constraint.tolerance_below = max(
+                0.0, float(self.get_parameter('finger_joint_tolerance_below').value)
+            )
+            finger_joint_constraint.weight = max(
+                0.0, float(self.get_parameter('finger_joint_weight').value)
+            )
+            constraints.joint_constraints.append(finger_joint_constraint)
+
         goal.request.goal_constraints = [constraints]
 
         goal.planning_options.plan_only = self._get_bool_param('plan_only')
@@ -255,7 +362,7 @@ class Demo06MoveItPoseGoal(Node):
         if self._finished:
             return
         self._finished = True
-        self.get_logger().info('motion_06_moveit_pose_goal node is shutting down.')
+        self.get_logger().info('%s node is shutting down.' % self.get_name())
         if rclpy.ok():
             rclpy.shutdown()
 
@@ -290,20 +397,51 @@ class Demo06MoveItPoseGoal(Node):
 
         p = transform.transform.translation
         q = transform.transform.rotation
-        self.get_logger().info(
-            'Current pose (%s in %s): pos=(%.3f, %.3f, %.3f) quat=(%.4f, %.4f, %.4f, %.4f)'
-            % (
-                target_link,
-                planning_frame,
-                p.x,
-                p.y,
-                p.z,
-                q.x,
-                q.y,
-                q.z,
-                q.w,
-            )
+        self._log_pose_block(
+            title='CURRENT POSE',
+            planning_group=None,
+            planning_frame=planning_frame,
+            target_link=target_link,
+            x=p.x,
+            y=p.y,
+            z=p.z,
+            qx=q.x,
+            qy=q.y,
+            qz=q.z,
+            qw=q.w,
         )
+
+    def _log_pose_block(
+        self,
+        *,
+        title: str,
+        planning_group: str | None,
+        planning_frame: str,
+        target_link: str,
+        x: float,
+        y: float,
+        z: float,
+        qx: float,
+        qy: float,
+        qz: float,
+        qw: float,
+    ) -> None:
+        lines = [
+            '',
+            f'-------------------- {title} --------------------',
+            f'  Frame : {planning_frame}',
+            f'  Link  : {target_link}',
+        ]
+        if planning_group:
+            lines.append(f'  Group : {planning_group}')
+        lines.extend(
+            [
+                f'  Pos   : x={x: .4f}   y={y: .4f}   z={z: .4f}',
+                f'  Quat  : qx={qx: .4f}  qy={qy: .4f}  qz={qz: .4f}  qw={qw: .4f}',
+                '------------------------------------------------------',
+            ]
+        )
+        self.get_logger().info('\n'.join(lines))
 
     def _get_bool_param(self, name: str) -> bool:
         value = self.get_parameter(name).value
@@ -316,12 +454,20 @@ class Demo06MoveItPoseGoal(Node):
         return bool(value)
 
 
-def main() -> None:
+def _run(node_name: str) -> None:
     rclpy.init()
-    node = Demo06MoveItPoseGoal()
+    node = Demo06MoveItPoseGoal(node_name=node_name)
     try:
         rclpy.spin(node)
     finally:
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
+
+
+def main() -> None:
+    _run('motion_06_moveit_pose_goal')
+
+
+def main_arm_hand() -> None:
+    _run('motion_07_moveit_arm_hand_pose_goal')

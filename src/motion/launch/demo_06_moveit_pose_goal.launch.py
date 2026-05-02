@@ -63,6 +63,11 @@ def generate_launch_description() -> LaunchDescription:
     pipeline_id_arg = DeclareLaunchArgument('pipeline_id', default_value='')
     planner_id_arg = DeclareLaunchArgument('planner_id', default_value='')
     move_action_name_arg = DeclareLaunchArgument('move_action_name', default_value='/move_action')
+    node_name_arg = DeclareLaunchArgument(
+        'node_name',
+        default_value='motion_06_moveit_pose_goal',
+        description='ROS node name for the pose-goal sender node.',
+    )
     server_timeout_arg = DeclareLaunchArgument('server_wait_timeout_sec', default_value='30.0')
     log_current_pose_arg = DeclareLaunchArgument(
         'log_current_pose_before_goal',
@@ -73,6 +78,71 @@ def generate_launch_description() -> LaunchDescription:
         'current_pose_wait_timeout_sec',
         default_value='2.0',
         description='How long to wait for current TF pose.',
+    )
+    use_finger_joint_constraint_arg = DeclareLaunchArgument(
+        'use_finger_joint_constraint',
+        default_value='false',
+        description='If true, add a joint constraint for the gripper finger joint while planning.',
+    )
+    finger_joint_name_arg = DeclareLaunchArgument(
+        'finger_joint_name',
+        default_value='panda_finger_joint1',
+        description='Finger joint name to constrain when use_finger_joint_constraint=true.',
+    )
+    finger_joint_target_arg = DeclareLaunchArgument(
+        'finger_joint_target',
+        default_value='0.035',
+        description='Target finger joint position (0.035=open, 0.0=closed).',
+    )
+    finger_joint_tolerance_above_arg = DeclareLaunchArgument(
+        'finger_joint_tolerance_above',
+        default_value='0.002',
+        description='Allowed positive deviation for constrained finger joint.',
+    )
+    finger_joint_tolerance_below_arg = DeclareLaunchArgument(
+        'finger_joint_tolerance_below',
+        default_value='0.002',
+        description='Allowed negative deviation for constrained finger joint.',
+    )
+    finger_joint_weight_arg = DeclareLaunchArgument(
+        'finger_joint_weight',
+        default_value='1.0',
+        description='Constraint weight for constrained finger joint.',
+    )
+    gripper_command_arg = DeclareLaunchArgument(
+        'gripper_command',
+        default_value='none',
+        description='Optional gripper action before pose goal: none | open | close.',
+    )
+    gripper_target_arg = DeclareLaunchArgument(
+        'gripper_target',
+        default_value='-1.0',
+        description='Direct gripper opening target (e.g. 0.02). Use -1.0 to disable and use gripper_command.',
+    )
+    gripper_joint_name_arg = DeclareLaunchArgument(
+        'gripper_joint_name',
+        default_value='panda_finger_joint1',
+        description='Gripper joint name used by the gripper controller.',
+    )
+    gripper_open_position_arg = DeclareLaunchArgument(
+        'gripper_open_position',
+        default_value='0.035',
+        description='Open position used for gripper_command:=open.',
+    )
+    gripper_closed_position_arg = DeclareLaunchArgument(
+        'gripper_closed_position',
+        default_value='0.0',
+        description='Closed position used for gripper_command:=close.',
+    )
+    gripper_motion_time_sec_arg = DeclareLaunchArgument(
+        'gripper_motion_time_sec',
+        default_value='1.0',
+        description='Duration for gripper controller trajectory point.',
+    )
+    gripper_wait_after_command_sec_arg = DeclareLaunchArgument(
+        'gripper_wait_after_command_sec',
+        default_value='0.0',
+        description='Optional wait time after gripper command before pose goal.',
     )
 
     panda_bringup = IncludeLaunchDescription(
@@ -90,7 +160,7 @@ def generate_launch_description() -> LaunchDescription:
     moveit_goal_node = Node(
         package='motion',
         executable='motion_06_moveit_pose_goal',
-        name='motion_06_moveit_pose_goal',
+        name=LaunchConfiguration('node_name'),
         output='screen',
         parameters=[
             {
@@ -121,6 +191,25 @@ def generate_launch_description() -> LaunchDescription:
                 'log_current_pose_before_goal': LaunchConfiguration('log_current_pose_before_goal'),
                 'current_pose_wait_timeout_sec': LaunchConfiguration(
                     'current_pose_wait_timeout_sec'
+                ),
+                'use_finger_joint_constraint': LaunchConfiguration('use_finger_joint_constraint'),
+                'finger_joint_name': LaunchConfiguration('finger_joint_name'),
+                'finger_joint_target': LaunchConfiguration('finger_joint_target'),
+                'finger_joint_tolerance_above': LaunchConfiguration(
+                    'finger_joint_tolerance_above'
+                ),
+                'finger_joint_tolerance_below': LaunchConfiguration(
+                    'finger_joint_tolerance_below'
+                ),
+                'finger_joint_weight': LaunchConfiguration('finger_joint_weight'),
+                'gripper_command': LaunchConfiguration('gripper_command'),
+                'gripper_target': LaunchConfiguration('gripper_target'),
+                'gripper_joint_name': LaunchConfiguration('gripper_joint_name'),
+                'gripper_open_position': LaunchConfiguration('gripper_open_position'),
+                'gripper_closed_position': LaunchConfiguration('gripper_closed_position'),
+                'gripper_motion_time_sec': LaunchConfiguration('gripper_motion_time_sec'),
+                'gripper_wait_after_command_sec': LaunchConfiguration(
+                    'gripper_wait_after_command_sec'
                 ),
             }
         ],
@@ -153,9 +242,23 @@ def generate_launch_description() -> LaunchDescription:
             pipeline_id_arg,
             planner_id_arg,
             move_action_name_arg,
+            node_name_arg,
             server_timeout_arg,
             log_current_pose_arg,
             current_pose_timeout_arg,
+            use_finger_joint_constraint_arg,
+            finger_joint_name_arg,
+            finger_joint_target_arg,
+            finger_joint_tolerance_above_arg,
+            finger_joint_tolerance_below_arg,
+            finger_joint_weight_arg,
+            gripper_command_arg,
+            gripper_target_arg,
+            gripper_joint_name_arg,
+            gripper_open_position_arg,
+            gripper_closed_position_arg,
+            gripper_motion_time_sec_arg,
+            gripper_wait_after_command_sec_arg,
             panda_bringup,
             moveit_goal_node,
         ]
