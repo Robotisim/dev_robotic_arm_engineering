@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<robot name="demo">
+	<link name="base_link">
+		<visual>
+			<geometry>
+				<cylinder length="1.0" radius="0.4"/>
+			</geometry>
+			<material name="green">
+				<color rgba="0 0.6 0 1"/>
+			</material>
+		</visual>
+		<collision>
+			<geometry>
+				<cylinder length="1.0" radius="0.4"/>
+			</geometry>
+		</collision>
+		<inertial>
+			<mass value="20"/>	
+				<mass value="20"/>
+				<inertia ixx="1e-3" ixy="0.0" ixz="0.0" iyy="1e-3" iyz="0.0" izz="1e-3"/>
+		</inertial>
+	</link>
+</robot>

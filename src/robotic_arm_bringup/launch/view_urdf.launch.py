@@ -1,8 +1,11 @@
+from pathlib import Path
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from xacro import process_file
 
 
 def _launch_setup(context, *_, **__):
@@ -10,8 +13,11 @@ def _launch_setup(context, *_, **__):
     rviz_config = PathJoinSubstitution(
         [FindPackageShare('robotic_arm_bringup'), 'rviz', 'demo.rviz']
     )
-    with open(urdf_path, 'r', encoding='utf-8') as urdf_file:
-        robot_description = urdf_file.read()
+    if Path(urdf_path).suffix == '.xacro':
+        robot_description = process_file(urdf_path).toxml()
+    else:
+        with open(urdf_path, 'r', encoding='utf-8') as urdf_file:
+            robot_description = urdf_file.read()
 
     return [
         Node(
@@ -45,9 +51,9 @@ def generate_launch_description() -> LaunchDescription:
             DeclareLaunchArgument(
                 'urdf',
                 default_value=PathJoinSubstitution(
-                    [FindPackageShare('robotic_arm_description'), 'urdf', 'demo', 'demo_links.urdf']
+                    [FindPackageShare('robotic_arm_description'), 'urdf', 'demo', 'demo_collision.urdf']
                 ),
-                description='Absolute path to the URDF file to visualize in RViz.',
+                description='Absolute path to the URDF or Xacro file to visualize in RViz.',
             ),
             DeclareLaunchArgument(
                 'use_sim_time',
