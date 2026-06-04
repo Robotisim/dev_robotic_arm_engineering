@@ -51,7 +51,7 @@ def generate_launch_description() -> LaunchDescription:
             DeclareLaunchArgument(
                 'urdf',
                 default_value=PathJoinSubstitution(
-                    [FindPackageShare('robotic_arm_description'), 'urdf', 'demo', 'demo_collision.urdf']
+                    [FindPackageShare('robotic_arm_description'), 'urdf', 'demo', 'demo_links.urdf']
                 ),
                 description='Absolute path to the URDF or Xacro file to visualize in RViz.',
             ),
