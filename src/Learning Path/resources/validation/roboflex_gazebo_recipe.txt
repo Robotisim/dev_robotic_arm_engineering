@@ -1,0 +1,4 @@
+[INFO] [1791983298.509940561] [task_client]: named:Arm Up
+[INFO] [1791983298.606917608] [task_client]: joint_goal
+[INFO] [1791983300.839102183] [task_client]: named:Arm Up
+[INFO] [1791983302.077233589] [task_client]: Command sequence complete; hardware joint arrival is unmeasured

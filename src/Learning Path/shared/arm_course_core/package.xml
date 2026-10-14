@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package format="3">
+  <name>arm_course_core</name>
+  <version>0.1.0</version>
+  <description>RoboFlex C++ learning path: arm_course_core.</description>
+  <maintainer email="brainswarms@gmail.com">RoboFlex</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>sensor_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>kdl_parser</depend>
+  <depend>urdf</depend>
+  <depend>liborocos-kdl-dev</depend>
+  <depend>eigen</depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,2 @@
+execute,steps,mean_inference_ms,lift_m,xy_error_m,z_error_m,manipulation_success
+1,5,0.185486,0,0.16,0.00500087,0

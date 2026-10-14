@@ -1,0 +1,1 @@
+[INFO] [1791988761.219292793] [language_task]: Validated interpretation: {"action":"pick","colour":"blue","destination":"right"}

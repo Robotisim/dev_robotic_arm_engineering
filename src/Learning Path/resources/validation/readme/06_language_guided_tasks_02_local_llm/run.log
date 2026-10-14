@@ -1,0 +1,36 @@
+[INFO] [1791988749.446456377] [task_client]: named:ready
+[INFO] [1791988749.521730942] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+waiting for service to become available...
+requester: making request: rcl_interfaces.srv.SetParameters_Request(parameters=[rcl_interfaces.msg.Parameter(name='randomize', value=rcl_interfaces.msg.ParameterValue(type=1, bool_value=False, integer_value=0, double_value=0.0, string_value='', byte_array_value=[], bool_array_value=[], integer_array_value=[], double_array_value=[], string_array_value=[]))])
+
+response:
+rcl_interfaces.srv.SetParameters_Response(results=[rcl_interfaces.msg.SetParametersResult(successful=True, reason='')])
+
+waiting for service to become available...
+requester: making request: std_srvs.srv.Trigger_Request()
+
+response:
+std_srvs.srv.Trigger_Response(success=True, message='Reset three cubes using deterministic PRNG sequence; reset only while arm is idle')
+
+  Model
+    architecture        qwen2      
+    parameters          494.03M    
+    context length      32768      
+    embedding length    896        
+    quantization        Q4_K_M     
+
+  Capabilities
+    completion    
+    tools         
+
+  System
+    You are Qwen, created by Alibaba Cloud. You are a helpful assistant.    
+
+  License
+    Apache License               
+    Version 2.0, January 2004    
+    ...                          
+
+[INFO] [1791988761.219292793] [language_task]: Validated interpretation: {"action":"pick","colour":"blue","destination":"right"}
+[INFO] [1791988761.775632402] [language_task]: Validated interpretation: {"action":"pick","colour":"blue","destination":"right"}
+[INFO] [1791988780.321166009] [language_task]: Gazebo object lift and placement verified

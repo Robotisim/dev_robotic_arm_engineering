@@ -1,0 +1,28 @@
+Starting >>> roboflex_control
+Finished <<< roboflex_control [0.12s]
+Starting >>> roboflex_description
+Finished <<< roboflex_description [0.12s]
+Starting >>> roboflex_moveit
+Finished <<< roboflex_moveit [0.08s]
+
+Summary: 3 packages finished [0.42s]
+Starting >>> arm_course_core
+Finished <<< arm_course_core [4.39s]
+Starting >>> arm_course_interfaces
+Finished <<< arm_course_interfaces [0.38s]
+Starting >>> arm_module_01
+Finished <<< arm_module_01 [9.88s]
+Starting >>> arm_module_07
+Finished <<< arm_module_07 [18.7s]
+Starting >>> arm_module_02
+Finished <<< arm_module_02 [9.14s]
+Starting >>> arm_module_03
+Finished <<< arm_module_03 [15.4s]
+Starting >>> panda_learning_sim
+Finished <<< panda_learning_sim [9.58s]
+Starting >>> arm_module_04
+Finished <<< arm_module_04 [15.5s]
+Starting >>> arm_module_06
+Finished <<< arm_module_06 [13.9s]
+
+Summary: 9 packages finished [1min 37s]

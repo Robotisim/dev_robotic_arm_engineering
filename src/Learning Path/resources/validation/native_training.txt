@@ -1,0 +1,4 @@
+Checkpoint: /tmp/course_verified_policy.json
+Training normalized MSE: 0.0105605
+Held-out normalized MSE: 0.048335
+Offline MSE does not establish manipulation success; evaluate in Gazebo.

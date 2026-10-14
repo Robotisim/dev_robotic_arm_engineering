@@ -1,0 +1,1 @@
+[INFO] [1791982025.904283746] [xyz_client]: Controller completed command sequence; hardware arrival is unmeasured residual=0.000079

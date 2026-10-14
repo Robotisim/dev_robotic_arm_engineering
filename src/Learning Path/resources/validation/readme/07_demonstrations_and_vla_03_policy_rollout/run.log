@@ -1,0 +1,85 @@
+[INFO] [1791988862.222577774] [task_client]: named:ready
+[INFO] [1791988862.306892459] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+waiting for service to become available...
+requester: making request: rcl_interfaces.srv.SetParameters_Request(parameters=[rcl_interfaces.msg.Parameter(name='randomize', value=rcl_interfaces.msg.ParameterValue(type=1, bool_value=False, integer_value=0, double_value=0.0, string_value='', byte_array_value=[], bool_array_value=[], integer_array_value=[], double_array_value=[], string_array_value=[]))])
+
+response:
+rcl_interfaces.srv.SetParameters_Response(results=[rcl_interfaces.msg.SetParametersResult(successful=True, reason='')])
+
+waiting for service to become available...
+requester: making request: std_srvs.srv.Trigger_Request()
+
+response:
+std_srvs.srv.Trigger_Response(success=True, message='Reset three cubes using deterministic PRNG sequence; reset only while arm is idle')
+
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-41-10-908547-pc-501967
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [policy_run-1]: process started with pid [501973]
+[policy_run-1] [WARN] [1791988871.062513263] [kdl_parser]: The root link panda_link0 has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[policy_run-1] [INFO] [1791988876.464988540] [policy_run]: step=0 native inference=0.358ms dispatched=preview
+[policy_run-1] [INFO] [1791988876.665541157] [policy_run]: step=1 native inference=0.179ms dispatched=preview
+[policy_run-1] [INFO] [1791988876.865973211] [policy_run]: step=2 native inference=0.199ms dispatched=preview
+[policy_run-1] [INFO] [1791988877.066379172] [policy_run]: step=3 native inference=0.169ms dispatched=preview
+[policy_run-1] [INFO] [1791988877.266826282] [policy_run]: step=4 native inference=0.230ms dispatched=preview
+[policy_run-1] [INFO] [1791988877.467178428] [policy_run]: step=5 native inference=0.150ms dispatched=preview
+[policy_run-1] [INFO] [1791988877.667423227] [policy_run]: step=6 native inference=0.049ms dispatched=preview
+[policy_run-1] [INFO] [1791988877.867876890] [policy_run]: step=7 native inference=0.248ms dispatched=preview
+[policy_run-1] [INFO] [1791988878.068141083] [policy_run]: step=8 native inference=0.049ms dispatched=preview
+[policy_run-1] [INFO] [1791988878.268473191] [policy_run]: step=9 native inference=0.181ms dispatched=preview
+[policy_run-1] [INFO] [1791988878.468878415] [policy_run]: step=10 native inference=0.198ms dispatched=preview
+[policy_run-1] [INFO] [1791988878.669239668] [policy_run]: step=11 native inference=0.151ms dispatched=preview
+[policy_run-1] [INFO] [1791988878.869817933] [policy_run]: step=12 native inference=0.257ms dispatched=preview
+[policy_run-1] [INFO] [1791988879.070240131] [policy_run]: step=13 native inference=0.228ms dispatched=preview
+[policy_run-1] [INFO] [1791988879.270751627] [policy_run]: step=14 native inference=0.269ms dispatched=preview
+[policy_run-1] [INFO] [1791988879.471290594] [policy_run]: step=15 native inference=0.278ms dispatched=preview
+[policy_run-1] [INFO] [1791988879.671628211] [policy_run]: step=16 native inference=0.143ms dispatched=preview
+[policy_run-1] [INFO] [1791988879.871892051] [policy_run]: step=17 native inference=0.108ms dispatched=preview
+[policy_run-1] [INFO] [1791988880.072193234] [policy_run]: step=18 native inference=0.140ms dispatched=preview
+[policy_run-1] [INFO] [1791988880.272695187] [policy_run]: step=19 native inference=0.299ms dispatched=preview
+[policy_run-1] [INFO] [1791988880.472928432] [policy_run]: step=20 native inference=0.050ms dispatched=preview
+[policy_run-1] [INFO] [1791988880.673288142] [policy_run]: step=21 native inference=0.183ms dispatched=preview
+[policy_run-1] [INFO] [1791988880.873735825] [policy_run]: step=22 native inference=0.245ms dispatched=preview
+[policy_run-1] [INFO] [1791988881.074015364] [policy_run]: step=23 native inference=0.049ms dispatched=preview
+[policy_run-1] [INFO] [1791988881.274283407] [policy_run]: step=24 native inference=0.081ms dispatched=preview
+[policy_run-1] [INFO] [1791988881.474493408] [policy_run]: step=25 native inference=0.049ms dispatched=preview
+[policy_run-1] [INFO] [1791988881.674676956] [policy_run]: step=26 native inference=0.056ms dispatched=preview
+[policy_run-1] [INFO] [1791988881.874841943] [policy_run]: step=27 native inference=0.048ms dispatched=preview
+[policy_run-1] [INFO] [1791988882.075106390] [policy_run]: step=28 native inference=0.118ms dispatched=preview
+[policy_run-1] [INFO] [1791988882.275397159] [policy_run]: step=29 native inference=0.135ms dispatched=preview
+[policy_run-1] [INFO] [1791988882.475877017] [policy_run]: step=30 native inference=0.253ms dispatched=preview
+[policy_run-1] [INFO] [1791988882.676445458] [policy_run]: step=31 native inference=0.328ms dispatched=preview
+[policy_run-1] [INFO] [1791988882.876861217] [policy_run]: step=32 native inference=0.182ms dispatched=preview
+[policy_run-1] [INFO] [1791988883.077231338] [policy_run]: step=33 native inference=0.160ms dispatched=preview
+[policy_run-1] [INFO] [1791988883.277546887] [policy_run]: step=34 native inference=0.134ms dispatched=preview
+[policy_run-1] [INFO] [1791988883.478078173] [policy_run]: step=35 native inference=0.289ms dispatched=preview
+[policy_run-1] [INFO] [1791988883.678427838] [policy_run]: step=36 native inference=0.146ms dispatched=preview
+[policy_run-1] [INFO] [1791988883.878781704] [policy_run]: step=37 native inference=0.156ms dispatched=preview
+[policy_run-1] [INFO] [1791988884.079291203] [policy_run]: step=38 native inference=0.263ms dispatched=preview
+[policy_run-1] [INFO] [1791988884.279749063] [policy_run]: step=39 native inference=0.216ms dispatched=preview
+[policy_run-1] [INFO] [1791988884.480169043] [policy_run]: step=40 native inference=0.220ms dispatched=preview
+[policy_run-1] [INFO] [1791988884.680632908] [policy_run]: step=41 native inference=0.239ms dispatched=preview
+[policy_run-1] [INFO] [1791988884.881090963] [policy_run]: step=42 native inference=0.200ms dispatched=preview
+[policy_run-1] [INFO] [1791988885.081478888] [policy_run]: step=43 native inference=0.182ms dispatched=preview
+[policy_run-1] [INFO] [1791988885.281961453] [policy_run]: step=44 native inference=0.254ms dispatched=preview
+[policy_run-1] [INFO] [1791988885.482332214] [policy_run]: step=45 native inference=0.154ms dispatched=preview
+[policy_run-1] [INFO] [1791988885.682572180] [policy_run]: step=46 native inference=0.091ms dispatched=preview
+[policy_run-1] [INFO] [1791988885.882776648] [policy_run]: step=47 native inference=0.059ms dispatched=preview
+[policy_run-1] [INFO] [1791988886.083240944] [policy_run]: step=48 native inference=0.275ms dispatched=preview
+[policy_run-1] [INFO] [1791988886.283860402] [policy_run]: step=49 native inference=0.374ms dispatched=preview
+[policy_run-1] [INFO] [1791988886.484175540] [policy_run]: Rollout complete: physical manipulation success=no (separate from inference completion)
+[INFO] [policy_run-1]: process has finished cleanly [pid 501973]
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-41-26-862641-pc-502467
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [policy_run-1]: process started with pid [502480]
+[policy_run-1] [WARN] [1791988887.013487783] [kdl_parser]: The root link panda_link0 has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[policy_run-1] [INFO] [1791988888.578143262] [policy_run]: step=0 native inference=0.112ms dispatched=yes
+[policy_run-1] [INFO] [1791988888.795690597] [policy_run]: step=1 native inference=0.114ms dispatched=yes
+[policy_run-1] [INFO] [1791988889.017140454] [policy_run]: step=2 native inference=0.134ms dispatched=yes
+[policy_run-1] [INFO] [1791988889.245282176] [policy_run]: step=3 native inference=0.155ms dispatched=yes
+[policy_run-1] [INFO] [1791988889.475787049] [policy_run]: step=4 native inference=0.413ms dispatched=yes
+[policy_run-1] [INFO] [1791988889.476450528] [policy_run]: Rollout complete: physical manipulation success=no (separate from inference completion)
+[INFO] [policy_run-1]: process has finished cleanly [pid 502480]
+execute,steps,mean_inference_ms,lift_m,xy_error_m,z_error_m,manipulation_success
+0,50,0.181443,0,0.16,0.00500087,0
+execute,steps,mean_inference_ms,lift_m,xy_error_m,z_error_m,manipulation_success
+1,5,0.185486,0,0.16,0.00500087,0

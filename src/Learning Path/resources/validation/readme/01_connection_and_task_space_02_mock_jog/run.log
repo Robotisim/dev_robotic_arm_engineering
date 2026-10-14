@@ -1,0 +1,31 @@
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-21-12-869606-pc-448349
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [joint_lab-1]: process started with pid [448400]
+[joint_lab-1] [WARN] [1791987672.968848932] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[joint_lab-1] [INFO] [1791987674.998593113] [joint_lab]: Validated jog preview; execute:=true is required to dispatch
+[joint_lab-1] joint_1: 0.0349066 rad (2 deg), bounds [0, 1.57]
+[joint_lab-1] joint_2: -0.383972 rad (-22 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] joint_3: -0.925025 rad (-53 deg), bounds [-1.57, -0.174444]
+[joint_lab-1] joint_4: -0.366519 rad (-21 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] TCP in base:  0.0432979 0.00985004   0.310078
+[INFO] [joint_lab-1]: process has finished cleanly [pid 448400]
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-21-15-366219-pc-448454
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [joint_lab-1]: process started with pid [448491]
+[joint_lab-1] [WARN] [1791987675.467790854] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[joint_lab-1] joint_1: 0.0349066 rad (2 deg), bounds [0, 1.57]
+[joint_lab-1] joint_2: -0.383972 rad (-22 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] joint_3: -0.925025 rad (-53 deg), bounds [-1.57, -0.174444]
+[joint_lab-1] joint_4: -0.366519 rad (-21 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] TCP in base:  0.0432979 0.00985004   0.310078
+[INFO] [joint_lab-1]: process has finished cleanly [pid 448491]
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-21-19-423025-pc-448663
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [joint_lab-1]: process started with pid [448671]
+[joint_lab-1] [WARN] [1791987679.537774568] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[joint_lab-1] joint_1: 0.05 rad (2.86479 deg), bounds [0, 1.57]
+[joint_lab-1] joint_2: -0.383972 rad (-22 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] joint_3: -0.925025 rad (-53 deg), bounds [-1.57, -0.174444]
+[joint_lab-1] joint_4: -0.366519 rad (-21 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] TCP in base: 0.0431443 0.0105024  0.310078
+[INFO] [joint_lab-1]: process has finished cleanly [pid 448671]

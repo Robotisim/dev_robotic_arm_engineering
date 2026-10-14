@@ -1,0 +1,2 @@
+[INFO] [1791987847.951533975] [task_client]: Unknown saved pose: not_taught
+[ros2run]: Process exited with failure 1

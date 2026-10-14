@@ -1,0 +1,3 @@
+episode	samples	min_future_s	max_future_s	features	actions	images_exist	finite
+episode_001	142	0.212	0.348	206	8	yes	yes
+episode_002	137	0.200	0.300	206	8	yes	yes

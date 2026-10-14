@@ -1,0 +1,14 @@
+[INFO] [1791987869.136946740] [task_client]: named:Arm Up
+[INFO] [1791987869.148763637] [task_client]: Preview/data operation complete; no motor command
+[INFO] [1791987872.198543047] [task_client]: named:Arm Up
+[INFO] [1791987872.198700841] [task_client]: joint_goal
+[INFO] [1791987872.198729684] [task_client]: named:Arm Up
+[INFO] [1791987872.227474136] [task_client]: Preview/data operation complete; no motor command
+[INFO] [1791987875.233652410] [task_client]: named:Arm Up
+[INFO] [1791987875.268927528] [task_client]: joint_goal
+[INFO] [1791987877.540751016] [task_client]: named:Arm Up
+[INFO] [1791987878.849528157] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+[INFO] [1791987879.419904291] [task_client]: joint_goal
+[INFO] [1791987879.420000968] [task_client]: Joint goal is invalid or outside hard limits
+[ros2run]: Process exited with failure 1
+[INFO] [1791987879.420000968] [task_client]: Joint goal is invalid or outside hard limits

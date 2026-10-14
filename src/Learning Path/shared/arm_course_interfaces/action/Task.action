@@ -1,0 +1,15 @@
+string operation
+string target
+float64[] joints
+geometry_msgs/PoseStamped pose
+geometry_msgs/PoseStamped destination
+string object_id
+float64 object_size
+float64 grasp_yaw
+bool execute
+---
+bool success
+string detail
+float64 duration
+---
+string stage

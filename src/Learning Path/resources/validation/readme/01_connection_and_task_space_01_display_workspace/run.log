@@ -1,0 +1,30 @@
+Waiting for at least 1 matching subscription(s)...
+Waiting for at least 1 matching subscription(s)...
+publisher: beginning loop
+publishing #1: sensor_msgs.msg.JointState(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=0, nanosec=0), frame_id=''), name=['joint_1', 'joint_2', 'joint_3', 'joint_4'], position=[0.1, -0.4, -0.9, -0.3], velocity=[], effort=[])
+
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-20-50-428406-pc-446678
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [joint_lab-1]: process started with pid [446706]
+[joint_lab-1] [WARN] [1791987650.527748333] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[joint_lab-1] joint_1: 0.1 rad (5.72958 deg), bounds [0, 1.57]
+[joint_lab-1] joint_2: -0.4 rad (-22.9183 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] joint_3: -0.9 rad (-51.5662 deg), bounds [-1.57, -0.174444]
+[joint_lab-1] joint_4: -0.3 rad (-17.1887 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] TCP in base: 0.0537832 0.0147712  0.304351
+[INFO] [joint_lab-1]: process has finished cleanly [pid 446706]
+Waiting for at least 1 matching subscription(s)...
+Waiting for at least 1 matching subscription(s)...
+publisher: beginning loop
+publishing #1: sensor_msgs.msg.JointState(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=0, nanosec=0), frame_id=''), name=['joint_1'], position=[2.0], velocity=[], effort=[])
+
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-20-56-460650-pc-447073
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [joint_lab-1]: process started with pid [447099]
+[joint_lab-1] [WARN] [1791987656.562494801] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[joint_lab-1] joint_1: 0.1 rad (5.72958 deg), bounds [0, 1.57]
+[joint_lab-1] joint_2: -0.4 rad (-22.9183 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] joint_3: -0.9 rad (-51.5662 deg), bounds [-1.57, -0.174444]
+[joint_lab-1] joint_4: -0.3 rad (-17.1887 deg), bounds [-1.57, 0.523333]
+[joint_lab-1] TCP in base: 0.0537832 0.0147712  0.304351
+[INFO] [joint_lab-1]: process has finished cleanly [pid 447099]

@@ -9,19 +9,38 @@ from launch_ros.actions import Node
 def generate_launch_description():
     pkg_share = get_package_share_directory("robot_arm_bringup")
 
-    xacro_file = os.path.join(
+    # xacro_file = os.path.join(
+    #     pkg_share,
+    #     "description",
+    #     "stick_arm.urdf.xacro",
+    # )
+    urdf_file = os.path.join(
         pkg_share,
-        "description",
-        "stick_arm.urdf.xacro",
+        "urdf",
+        "stick_arm.urdf",
     )
-
     rviz_config = os.path.join(
         pkg_share,
         "config",
         "stick_arm.rviz",
     )
 
-    robot_description = xacro.process_file(xacro_file).toxml()
+    with open(urdf_file, "r") as file:
+        robot_description = file.read()
+
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        parameters=[
+            {
+                "robot_description": robot_description,
+                "use_sim_time": False,
+            }
+        ],
+        output="screen",
+    )
+
+    # robot_description = xacro.process_file(xacro_file).toxml()
 
     robot_state_publisher = Node(
         package="robot_state_publisher",

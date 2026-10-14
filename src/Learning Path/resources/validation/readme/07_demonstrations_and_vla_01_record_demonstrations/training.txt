@@ -1,0 +1,4 @@
+Checkpoint: /home/luqman/repos/RoboFlexv2.1/Learning Path/artifacts/verified-readmes/07_demonstrations_and_vla_01_record_demonstrations/recorded_policy.json
+Training normalized MSE: 0.0131877
+Held-out normalized MSE: 0.0434965
+Offline MSE does not establish manipulation success; evaluate in Gazebo.

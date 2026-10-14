@@ -1,0 +1,4 @@
+project,trial,colour,yaw,success,detail
+stack,0,red,0,1,"Gazebo object lift and placement verified"
+stack,0,green,0,1,"Gazebo object lift and placement verified"
+stack,0,blue,0,1,"Gazebo object lift and placement verified"

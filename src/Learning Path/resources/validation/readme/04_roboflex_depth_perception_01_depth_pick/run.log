@@ -1,0 +1,20 @@
+[INFO] [1791988653.515404866] [task_client]: named:ready
+[INFO] [1791988653.603599010] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+waiting for service to become available...
+requester: making request: rcl_interfaces.srv.SetParameters_Request(parameters=[rcl_interfaces.msg.Parameter(name='randomize', value=rcl_interfaces.msg.ParameterValue(type=1, bool_value=False, integer_value=0, double_value=0.0, string_value='', byte_array_value=[], bool_array_value=[], integer_array_value=[], double_array_value=[], string_array_value=[]))])
+
+response:
+rcl_interfaces.srv.SetParameters_Response(results=[rcl_interfaces.msg.SetParametersResult(successful=True, reason='')])
+
+waiting for service to become available...
+requester: making request: std_srvs.srv.Trigger_Request()
+
+response:
+std_srvs.srv.Trigger_Response(success=True, message='Reset three cubes using deterministic PRNG sequence; reset only while arm is idle')
+
+[INFO] [1791988665.689606020] [perception_pick]: trial 0: Preview/data operation complete; no motor command
+[INFO] [1791988665.689794323] [perception_pick]: 1/1 successful
+[INFO] [1791988683.091128766] [perception_pick]: trial 0: Gazebo object lift and placement verified
+[INFO] [1791988683.091277167] [perception_pick]: 1/1 successful
+trial,attempt,object,success,detail
+0,0,red_cube,1,"Gazebo object lift and placement verified"

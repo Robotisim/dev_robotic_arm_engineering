@@ -1,0 +1,2 @@
+[INFO] [1791988761.775632402] [language_task]: Validated interpretation: {"action":"pick","colour":"blue","destination":"right"}
+[INFO] [1791988780.321166009] [language_task]: Gazebo object lift and placement verified

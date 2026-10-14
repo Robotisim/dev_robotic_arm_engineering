@@ -5,6 +5,17 @@
 
 ROS 2 Robotic Arm Model, URDF, TF, RViz, and Simulation Bringup
 
+### Recording Order
+- Launch File
+- URDF
+- Xacro Conversion
+- Xacro Launch
+- Xacro Coplete URDF Translatie
+- Gazebo Controllers Installation and explanation
+
+- Bring URDF Xacro of real robot in rviz with similar launch file as stick arm
+- Same Gazebo file with ros2 controller
+
 ## Instructor Flow Design Answers
 
 **Questions Based Instructor Flow Design?**

@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package format="3">
+  <name>arm_module_03</name>
+  <version>0.1.0</version>
+  <description>RoboFlex C++ learning path: arm_module_03.</description>
+  <maintainer email="brainswarms@gmail.com">RoboFlex</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>arm_course_core</depend>
+  <depend>arm_course_interfaces</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_msgs</depend>
+  <depend>shape_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>control_msgs</depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <depend>yaml-cpp</depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+  <exec_depend>arm_module_01</exec_depend>
+  <exec_depend>roboflex_description</exec_depend>
+  <exec_depend>roboflex_moveit</exec_depend>
+  <exec_depend>moveit_configs_utils</exec_depend>
+  <exec_depend>moveit_ros_move_group</exec_depend>
+</package>

@@ -1,0 +1,3 @@
+[INFO] [1791987755.420385097] [task_client]: joint_goal
+[INFO] [1791987755.420708211] [task_client]: Joint goal is invalid or outside hard limits
+[ros2run]: Process exited with failure 1

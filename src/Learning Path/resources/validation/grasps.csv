@@ -1,0 +1,4 @@
+project,trial,colour,yaw,success,detail
+grasps,0,red,0,1,"Gazebo object lift and placement verified"
+grasps,0,green,0.785398,1,"Gazebo object lift and placement verified"
+grasps,0,blue,1.5708,1,"Gazebo object lift and placement verified"

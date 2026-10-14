@@ -1,0 +1,19 @@
+[INFO] [1791987783.086354342] [task_client]: named:ready
+[INFO] [1791987783.156359912] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+waiting for service to become available...
+requester: making request: rcl_interfaces.srv.SetParameters_Request(parameters=[rcl_interfaces.msg.Parameter(name='randomize', value=rcl_interfaces.msg.ParameterValue(type=1, bool_value=False, integer_value=0, double_value=0.0, string_value='', byte_array_value=[], bool_array_value=[], integer_array_value=[], double_array_value=[], string_array_value=[]))])
+
+response:
+rcl_interfaces.srv.SetParameters_Response(results=[rcl_interfaces.msg.SetParametersResult(successful=True, reason='')])
+
+waiting for service to become available...
+requester: making request: std_srvs.srv.Trigger_Request()
+
+response:
+std_srvs.srv.Trigger_Response(success=True, message='Reset three cubes using deterministic PRNG sequence; reset only while arm is idle')
+
+[INFO] [1791987838.023257272] [project_runner]: stack: 3/3 tasks succeeded
+project,trial,colour,yaw,success,detail
+stack,0,red,0,1,"Gazebo object lift and placement verified"
+stack,0,green,0,1,"Gazebo object lift and placement verified"
+stack,0,blue,0,1,"Gazebo object lift and placement verified"

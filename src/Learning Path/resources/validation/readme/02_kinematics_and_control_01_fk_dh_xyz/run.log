@@ -1,0 +1,103 @@
+[INFO] [launch]: All log files can be found below /home/luqman/.ros/log/2026-10-14-19-21-57-941375-pc-451272
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [kinematics_node-1]: process started with pid [451280]
+[kinematics_node-1] [WARN] [1791987718.045781484] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[kinematics_node-1] joint,theta_offset_rad,d_m,a_m,alpha_rad,lower_rad,upper_rad
+[kinematics_node-1] joint_1,1.65806345514,0.024,9.10738942033e-06,1.57079632679,0,1.57
+[kinematics_node-1] joint_2,2.39412843175,-0.0334999201667,0.0899995509072,3.14159188656,-1.57,0.523333
+[kinematics_node-1] joint_3,1.81694750406,0.001,0.101877765764,-6.93889390391e-18,-1.57,-0.174444
+[kinematics_node-1] joint_4,0,0,0,-6.93889390391e-18,-1.57,0.523333
+[kinematics_node-1] base_transform
+[kinematics_node-1]      0      1      0      0
+[kinematics_node-1]     -1      0      0      0
+[kinematics_node-1]      0     -0      1 0.0515
+[kinematics_node-1]      0      0      0      1
+[kinematics_node-1] tool_transform
+[kinematics_node-1]     0.838004243223                  0     0.545663713601    0.0645340143722
+[kinematics_node-1]     0.545663713601 -6.93889390391e-18    -0.838004243223    0.0324746206908
+[kinematics_node-1]                  0                  1                  0              -0.03
+[kinematics_node-1]                  0                  0                  0                  1
+[INFO] [kinematics_node-1]: process has finished cleanly [pid 451280]
+Starting >>> arm_course_core
+UpdateCTestConfiguration  from :/home/luqman/repos/RoboFlexv2.1/build/learning/arm_course_core/CTestConfiguration.ini
+Parse Config file:/home/luqman/repos/RoboFlexv2.1/build/learning/arm_course_core/CTestConfiguration.ini
+   Site: pc
+   Build name: (empty)
+ Add coverage exclude regular expressions.
+Create new tag: 20261014-1421 - Experimental
+UpdateCTestConfiguration  from :/home/luqman/repos/RoboFlexv2.1/build/learning/arm_course_core/CTestConfiguration.ini
+Parse Config file:/home/luqman/repos/RoboFlexv2.1/build/learning/arm_course_core/CTestConfiguration.ini
+Test project /home/luqman/repos/RoboFlexv2.1/build/learning/arm_course_core
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: core_checks
+
+1: Test command: /home/luqman/repos/RoboFlexv2.1/build/learning/arm_course_core/core_checks "/home/luqman/repos/RoboFlexv2.1/Learning Path/shared/arm_course_core/../../../roboflex_ros2/roboflex_description/urdf/real_hardware.urdf.xacro"
+1: Working Directory: /home/luqman/repos/RoboFlexv2.1/build/learning/arm_course_core
+1: Test timeout computed to be: 10000000
+1: [WARN] [1791987719.283795450] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+1: PASS: 100 DH/KDL comparisons, numerical Jacobians, 100 IK goals, trajectory bounds, unreachable/NaN rejection. Worst DH error 1.17845e-06
+1: joint,theta_offset_rad,d_m,a_m,alpha_rad,lower_rad,upper_rad
+1: joint_1,1.65806345514,0.024,9.10738942033e-06,1.57079632679,0,1.57
+1: joint_2,2.39412843175,-0.0334999201667,0.0899995509072,3.14159188656,-1.57,0.523333
+1: joint_3,1.81694750406,0.001,0.101877765764,-6.93889390391e-18,-1.57,-0.174444
+1: joint_4,0,0,0,-6.93889390391e-18,-1.57,0.523333
+1: base_transform
+1:      0      1      0      0
+1:     -1      0      0      0
+1:      0     -0      1 0.0515
+1:      0      0      0      1
+1: tool_transform
+1:     0.838004243223                  0     0.545663713601    0.0645340143722
+1:     0.545663713601 -6.93889390391e-18    -0.838004243223    0.0324746206908
+1:                  0                  1                  0              -0.03
+1:                  0                  0                  0                  1
+1/1 Test #1: core_checks ......................   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.01 sec
+Finished <<< arm_course_core [0.04s]
+Starting >>> arm_module_07
+UpdateCTestConfiguration  from :/home/luqman/repos/RoboFlexv2.1/build/learning/arm_module_07/CTestConfiguration.ini
+Parse Config file:/home/luqman/repos/RoboFlexv2.1/build/learning/arm_module_07/CTestConfiguration.ini
+   Site: pc
+   Build name: (empty)
+ Add coverage exclude regular expressions.
+Create new tag: 20261014-1421 - Experimental
+UpdateCTestConfiguration  from :/home/luqman/repos/RoboFlexv2.1/build/learning/arm_module_07/CTestConfiguration.ini
+Parse Config file:/home/luqman/repos/RoboFlexv2.1/build/learning/arm_module_07/CTestConfiguration.ini
+Test project /home/luqman/repos/RoboFlexv2.1/build/learning/arm_module_07
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: native_policy_learning
+
+1: Test command: /home/luqman/repos/RoboFlexv2.1/build/learning/arm_module_07/policy_train "--ros-args" "-p" "self_test:=true" "-p" "output:=/tmp/arm_course_test_policy.json"
+1: Working Directory: /home/luqman/repos/RoboFlexv2.1/build/learning/arm_module_07
+1: Test timeout computed to be: 10000000
+1: PASS: native C++ learning loss 1.4227 -> 9.73578e-06; checkpoint round-trip matches. Synthetic test is not a trained robot policy.
+1/1 Test #1: native_policy_learning ...........   Passed    0.21 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.21 sec
+Finished <<< arm_module_07 [0.26s]
+
+Summary: 2 packages finished [0.45s]
+Summary: 2 tests, 0 errors, 0 failures, 0 skipped
+Launch syntax and package/world XML checked.
+[INFO] [1791987720.126401669] [xyz_client]: IK preview complete; no motion commanded residual=0.000079
+[INFO] [1791987724.205077255] [xyz_client]: Controller completed command sequence; hardware arrival is unmeasured residual=0.000079
+[INFO] [1791987729.198147351] [xyz_client]: No bounded solution from this seed; try another seed or a reachable target residual=3.304483
+[ros2run]: Process exited with failure 1
+[INFO] [1791987729.198147351] [xyz_client]: No bounded solution from this seed; try another seed or a reachable target residual=3.304483

@@ -1,0 +1,17 @@
+[WARN] [1791981639.081757785] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+PASS: 100 DH/KDL comparisons, numerical Jacobians, 100 IK goals, trajectory bounds, unreachable/NaN rejection. Worst DH error 1.17845e-06
+joint,theta_offset_rad,d_m,a_m,alpha_rad,lower_rad,upper_rad
+joint_1,1.65806345514,0.024,9.10738942033e-06,1.57079632679,0,1.57
+joint_2,2.39412843175,-0.0334999201667,0.0899995509072,3.14159188656,-1.57,0.523333
+joint_3,1.81694750406,0.001,0.101877765764,-6.93889390391e-18,-1.57,-0.174444
+joint_4,0,0,0,-6.93889390391e-18,-1.57,0.523333
+base_transform
+     0      1      0      0
+    -1      0      0      0
+     0     -0      1 0.0515
+     0      0      0      1
+tool_transform
+    0.838004243223                  0     0.545663713601    0.0645340143722
+    0.545663713601 -6.93889390391e-18    -0.838004243223    0.0324746206908
+                 0                  1                  0              -0.03
+                 0                  0                  0                  1

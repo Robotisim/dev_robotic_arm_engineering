@@ -1,0 +1,67 @@
+[INFO] [1791987768.277686674] [task_client]: joint_goal
+[INFO] [1791987768.831145868] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+[INFO] [1791987771.459905557] [task_client]: save_pose
+[INFO] [1791987771.460401867] [task_client]: Preview/data operation complete; no motor command
+[INFO] [1791987774.494160016] [task_client]: joint_goal
+[INFO] [1791987775.200921780] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+[INFO] [1791987777.574655504] [task_client]: save_pose
+[INFO] [1791987777.575423578] [task_client]: Preview/data operation complete; no motor command
+[INFO] [1791987781.231046611] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+[INFO] [1791987783.599017062] [task_client]: save_pose
+[INFO] [1791987783.599352262] [task_client]: Preview/data operation complete; no motor command
+[INFO] [1791987784.073703241] [task_client]: joint_goal
+[INFO] [1791987784.771333871] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+[INFO] [1791987786.456203420] [task_client]: save_pose
+[INFO] [1791987786.456321980] [task_client]: Preview/data operation complete; no motor command
+robot: roboflex
+joint_names:
+  - joint_1
+  - joint_2
+  - joint_3
+  - joint_4
+poses:
+  pre_pick:
+    - 0.040009798040986061
+    - -0.38397602457777374
+    - -0.92495641190171063
+    - -0.36661790746421402
+  pick:
+    - 0.049940402905875821
+    - -0.38400051705796046
+    - -0.92494697824077499
+    - -0.36642890234886522
+  pre_place:
+    - 0.069951880464563146
+    - -0.38391825676095448
+    - -0.92512300960061888
+    - -0.36659046649531313
+  place:
+    - 0.080096133944019682
+    - -0.38399846386500408
+    - -0.92499076170924865
+    - -0.36658786158616502[INFO] [1791987789.513542125] [task_client]: joint_goal
+[INFO] [1791987789.542016300] [task_client]: Preview/data operation complete; no motor command
+[INFO] [1791987793.681062403] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+[INFO] [1791987796.216073092] [task_client]: joint_goal
+[INFO] [1791987796.216204794] [task_client]: gripper:0.523333
+[INFO] [1791987796.216223127] [task_client]: joint_goal
+[INFO] [1791987796.216235956] [task_client]: gripper:0.000000
+[INFO] [1791987796.216248430] [task_client]: joint_goal
+[INFO] [1791987796.218140261] [task_client]: joint_goal
+[INFO] [1791987796.249814756] [task_client]: joint_goal
+[INFO] [1791987796.278832450] [task_client]: gripper:0.523333
+[INFO] [1791987796.279195762] [task_client]: joint_goal
+[INFO] [1791987796.308689127] [task_client]: Preview/data operation complete; no motor command
+[INFO] [1791987799.191979331] [task_client]: joint_goal
+[INFO] [1791987799.230185603] [task_client]: gripper:0.523333
+[INFO] [1791987812.335932999] [task_client]: joint_goal
+[INFO] [1791987813.040991980] [task_client]: gripper:0.000000
+[INFO] [1791987827.150263923] [task_client]: joint_goal
+[INFO] [1791987827.851972528] [task_client]: joint_goal
+[INFO] [1791987829.021795073] [task_client]: joint_goal
+[INFO] [1791987829.730171593] [task_client]: gripper:0.523333
+[INFO] [1791987843.836440305] [task_client]: joint_goal
+[INFO] [1791987844.541276259] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+[INFO] [1791987847.951533975] [task_client]: Unknown saved pose: not_taught
+[ros2run]: Process exited with failure 1
+[INFO] [1791987847.951533975] [task_client]: Unknown saved pose: not_taught

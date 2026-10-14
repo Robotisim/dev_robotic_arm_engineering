@@ -1,0 +1,48 @@
+[INFO] [1791988799.339609038] [task_client]: named:ready
+[INFO] [1791988799.403908635] [task_client]: Command sequence complete; hardware joint arrival is unmeasured
+waiting for service to become available...
+requester: making request: rcl_interfaces.srv.SetParameters_Request(parameters=[rcl_interfaces.msg.Parameter(name='randomize', value=rcl_interfaces.msg.ParameterValue(type=1, bool_value=False, integer_value=0, double_value=0.0, string_value='', byte_array_value=[], bool_array_value=[], integer_array_value=[], double_array_value=[], string_array_value=[]))])
+
+response:
+rcl_interfaces.srv.SetParameters_Response(results=[rcl_interfaces.msg.SetParametersResult(successful=True, reason='')])
+
+waiting for service to become available...
+requester: making request: std_srvs.srv.Trigger_Request()
+
+response:
+std_srvs.srv.Trigger_Response(success=True, message='Reset three cubes using deterministic PRNG sequence; reset only while arm is idle')
+
+  Model
+    architecture        gemma4    
+    parameters          11.9B     
+    context length      262144    
+    embedding length    3840      
+    quantization        Q4_K_M    
+    requires            0.30.5    
+
+  Capabilities
+    completion    
+    vision        
+    audio         
+    tools         
+    thinking      
+
+  Projector
+    architecture        clip      
+    parameters          52.38M    
+    embedding length    3840      
+    dimensions          3840      
+
+  Parameters
+    temperature    1       
+    top_k          64      
+    top_p          0.95    
+
+  License
+    Apache License               
+    Version 2.0, January 2004    
+    ...                          
+
+[INFO] [1791988824.266869437] [language_task]: Validated interpretation: {"action":"pick","colour":"green","destination":"right"}
+[INFO] [1791988827.329964388] [language_task]: Validated interpretation: {"action":"pick","colour":"green","destination":"right"}
+[INFO] [1791988842.278221815] [language_task]: Gazebo object lift and placement verified

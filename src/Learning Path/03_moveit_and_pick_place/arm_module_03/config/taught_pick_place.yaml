@@ -1,0 +1,15 @@
+# Record these four poses with task_client operation:=save first.
+# These are keys in the pose store, not invented coordinates for your workbench.
+robot: roboflex
+steps:
+  - saved_pose: pre_pick
+  - gripper: 0.523333
+  - saved_pose: pick
+  - gripper: 0.0
+  - wait: 1.0
+  - saved_pose: pre_pick
+  - saved_pose: pre_place
+  - saved_pose: place
+  - gripper: 0.523333
+  - wait: 1.0
+  - saved_pose: pre_place

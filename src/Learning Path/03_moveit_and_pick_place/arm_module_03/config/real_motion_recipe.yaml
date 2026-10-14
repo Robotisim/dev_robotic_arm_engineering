@@ -1,0 +1,6 @@
+robot: roboflex
+steps:
+  - named: Arm Up
+  - joints: [0.0698132, -0.3839724, -0.9250245, -0.3665191]
+  - wait: 1.0
+  - named: Arm Up
